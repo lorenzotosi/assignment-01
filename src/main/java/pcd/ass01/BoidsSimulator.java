@@ -7,7 +7,7 @@ public class BoidsSimulator {
     private BoidsModel model;
     private Optional<BoidsView> view;
     
-    private static final int FRAMERATE = 25;
+    private static final int FRAMERATE = 60;
     private int framerate;
     
     public BoidsSimulator(BoidsModel model) {
@@ -20,30 +20,24 @@ public class BoidsSimulator {
     }
       
     public void runSimulation() {
+        var boids = model.getThreads();
+        boids.forEach(Thread::start);
     	while (true) {
             var t0 = System.currentTimeMillis();
-    		var boids = model.getBoids();
-    		/*
-    		for (Boid boid : boids) {
-                boid.update(model);
-            }
-            */
-    		
     		/* 
     		 * Improved correctness: first update velocities...
     		 */
-    		for (Boid boid : boids) {
-                boid.updateVelocity(model);
-            }
+//    		for (Boid boid : boids) {
+//                boid.updateVelocity(model);
+//            }
 
     		/* 
     		 * ..then update positions
     		 */
-    		for (Boid boid : boids) {
-                boid.updatePos(model);
-            }
+//    		for (Boid boid : boids) {
+//                boid.updatePos(model);
+//            }
 
-            
     		if (view.isPresent()) {
             	view.get().update(framerate);
             	var t1 = System.currentTimeMillis();

@@ -1,8 +1,10 @@
 package pcd.ass01;
 
+import worker.Worker;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CyclicBarrier;
 
 public class BoidsModel {
     
@@ -15,6 +17,8 @@ public class BoidsModel {
     private final double maxSpeed;
     private final double perceptionRadius;
     private final double avoidRadius;
+    private List<Worker> threads;
+    private final CyclicBarrier barrier;
 
     public BoidsModel(int nboids,  
     						double initialSeparationWeight, 
@@ -35,16 +39,26 @@ public class BoidsModel {
         this.avoidRadius = avoidRadius;
         
     	boids = new ArrayList<>();
+        threads = new ArrayList<>();
+        this.barrier = new CyclicBarrier(nboids);
+
         for (int i = 0; i < nboids; i++) {
         	P2d pos = new P2d(-width/2 + Math.random() * width, -height/2 + Math.random() * height);
         	V2d vel = new V2d(Math.random() * maxSpeed/2 - maxSpeed/4, Math.random() * maxSpeed/2 - maxSpeed/4);
-        	boids.add(new Boid(pos, vel));
+            var b = new Boid(pos, vel);
+            boids.add(b);
+            var thread = new Worker(b, this, barrier);
+            threads.add(thread);
         }
 
     }
     
     public synchronized List<Boid> getBoids(){
     	return boids;
+    }
+
+    public synchronized List<Worker> getThreads(){
+        return threads;
     }
     
     public synchronized double getMinX() {

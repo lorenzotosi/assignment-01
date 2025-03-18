@@ -65,7 +65,7 @@ public class Boid {
     	V2d alignment = calculateAlignment(nearbyBoids, model);
     	V2d cohesion = calculateCohesion(nearbyBoids, model);
     	
-    	vel = vel.sum(alignment.mul(model.getAlignmentWeight()))
+    	this.vel = vel.sum(alignment.mul(model.getAlignmentWeight()))
     			.sum(separation.mul(model.getSeparationWeight()))
     			.sum(cohesion.mul(model.getCohesionWeight()));
         
@@ -82,7 +82,7 @@ public class Boid {
 
         /* Update position */
 
-        pos = pos.sum(vel);
+        this.pos = pos.sum(vel);
         
         /* environment wrap-around */
         
@@ -161,4 +161,9 @@ public class Boid {
         	return new V2d(0, 0);
         }
     }
+
+    public void ciao() {
+        System.out.println(this.toString());
+    }
+
 }

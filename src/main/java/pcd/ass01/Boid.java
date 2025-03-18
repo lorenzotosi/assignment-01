@@ -8,6 +8,10 @@ public class Boid {
     private P2d pos;
     private V2d vel;
 
+    private V2d alignment;
+    private V2d separation;
+    private V2d cohesion;
+
     public Boid(P2d pos, V2d vel) {
     	this.pos = pos;
     	this.vel = vel;
@@ -55,16 +59,16 @@ public class Boid {
         if (pos.y() >= model.getMaxY()) pos = pos.sum(new V2d(0, -model.getHeight()));
     }
     
-    public void updateVelocity(BoidsModel model) {
+    public void calculateVelocity(BoidsModel model) {
 
-    	/* change velocity vector according to separation, alignment, cohesion */
-    	
-    	List<Boid> nearbyBoids = getNearbyBoids(model);
-    	
-    	V2d separation = calculateSeparation(nearbyBoids, model);
-    	V2d alignment = calculateAlignment(nearbyBoids, model);
-    	V2d cohesion = calculateCohesion(nearbyBoids, model);
-    	
+        List<Boid> nearbyBoids = getNearbyBoids(model);
+
+        this.separation = calculateSeparation(nearbyBoids, model);
+        this.alignment = calculateAlignment(nearbyBoids, model);
+        this.cohesion = calculateCohesion(nearbyBoids, model);
+    }
+    
+    public void updateVelocity(BoidsModel model) {
     	this.vel = vel.sum(alignment.mul(model.getAlignmentWeight()))
     			.sum(separation.mul(model.getSeparationWeight()))
     			.sum(cohesion.mul(model.getCohesionWeight()));
@@ -160,10 +164,6 @@ public class Boid {
         } else {
         	return new V2d(0, 0);
         }
-    }
-
-    public void ciao() {
-        System.out.println(this.toString());
     }
 
 }

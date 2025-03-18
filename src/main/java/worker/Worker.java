@@ -22,8 +22,9 @@ public class Worker extends Thread {
         while (true) {
             try {
                 //System.out.println("before");
-                boid.updateVelocity(boidsModel);
+                boid.calculateVelocity(boidsModel);
                 barrier.await();
+                boid.updateVelocity(boidsModel);
                 boid.updatePos(boidsModel);
                 //System.out.println("after");
                 barrier.await();

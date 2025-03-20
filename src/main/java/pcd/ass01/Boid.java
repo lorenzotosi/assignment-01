@@ -69,12 +69,6 @@ public class Boid {
     }
     
     public void updateVelocity(BoidsModel model) {
-//        List<Boid> nearbyBoids = getNearbyBoids(model);
-//
-//        V2d separation = calculateSeparation(nearbyBoids, model);
-//        V2d alignment = calculateAlignment(nearbyBoids, model);
-//        V2d cohesion = calculateCohesion(nearbyBoids, model);
-
     	this.vel = vel.sum(alignment.mul(model.getAlignmentWeight()))
     			.sum(separation.mul(model.getSeparationWeight()))
     			.sum(cohesion.mul(model.getCohesionWeight()));

@@ -50,7 +50,7 @@ public class BoidsModel {
         boids.clear();
         this.numBoids = nboids;
         this.barrier = new CyclicBarrier(nboids + 1);
-        int nThreads = 1; //Runtime.getRuntime().availableProcessors();
+        int nThreads = Runtime.getRuntime().availableProcessors() - 1;
         int nBoidsPerThread = nboids / nThreads;
         int from = 0;
         int to = nBoidsPerThread - 1;
@@ -66,6 +66,7 @@ public class BoidsModel {
             var thread = new MultiWorker(b, this, barrier);
             threads.add(thread);
         }
+        var x = 5;
     }
 
     public synchronized CyclicBarrier getBarrier() {

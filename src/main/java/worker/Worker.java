@@ -21,12 +21,10 @@ public class Worker extends Thread {
     public void run() {
         while (true) {
             try {
-                //System.out.println("before");
                 boid.calculateVelocity(boidsModel);
                 barrier.await();
                 boid.updateVelocity(boidsModel);
                 boid.updatePos(boidsModel);
-                //System.out.println("after");
                 barrier.await();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

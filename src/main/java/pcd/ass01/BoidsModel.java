@@ -18,10 +18,9 @@ public class BoidsModel {
     private final double perceptionRadius;
     private final double avoidRadius;
     private List<Worker> threads;
-    private CyclicBarrier barrier;
-    private int numBoids;
+    private final CyclicBarrier barrier;
 
-    public BoidsModel(int nboids,
+    public BoidsModel(int nboids,  
     						double initialSeparationWeight, 
     						double initialAlignmentWeight, 
     						double initialCohesionWeight,
@@ -41,30 +40,17 @@ public class BoidsModel {
         
     	boids = new ArrayList<>();
         threads = new ArrayList<>();
-        //this.barrier = new CyclicBarrier(nboids);
-
-//        for (int i = 0; i < nboids; i++) {
-//        	P2d pos = new P2d(-width/2 + Math.random() * width, -height/2 + Math.random() * height);
-//        	V2d vel = new V2d(Math.random() * maxSpeed/2 - maxSpeed/4, Math.random() * maxSpeed/2 - maxSpeed/4);
-//            var b = new Boid(pos, vel);
-//            boids.add(b);
-//            var thread = new Worker(b, this, barrier);
-//            threads.add(thread);
-//        }
-
-    }
-
-    public synchronized void setBoids(final int nboids) {
-        this.numBoids = nboids;
         this.barrier = new CyclicBarrier(nboids);
-        for (int i = 0; i < numBoids; i++) {
-            P2d pos = new P2d(-width/2 + Math.random() * width, -height/2 + Math.random() * height);
-            V2d vel = new V2d(Math.random() * maxSpeed/2 - maxSpeed/4, Math.random() * maxSpeed/2 - maxSpeed/4);
+
+        for (int i = 0; i < nboids; i++) {
+        	P2d pos = new P2d(-width/2 + Math.random() * width, -height/2 + Math.random() * height);
+        	V2d vel = new V2d(Math.random() * maxSpeed/2 - maxSpeed/4, Math.random() * maxSpeed/2 - maxSpeed/4);
             var b = new Boid(pos, vel);
             boids.add(b);
             var thread = new Worker(b, this, barrier);
             threads.add(thread);
         }
+
     }
     
     public synchronized List<Boid> getBoids(){

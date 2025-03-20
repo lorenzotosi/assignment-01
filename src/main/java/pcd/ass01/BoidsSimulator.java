@@ -20,10 +20,24 @@ public class BoidsSimulator {
     }
       
     public void runSimulation() {
-        //var boids = model.getThreads();
-        //boids.forEach(Thread::start);
+        var boids = model.getThreads();
+        boids.forEach(Thread::start);
     	while (true) {
             var t0 = System.currentTimeMillis();
+    		/* 
+    		 * Improved correctness: first update velocities...
+    		 */
+//    		for (Boid boid : boids) {
+//                boid.updateVelocity(model);
+//            }
+
+    		/* 
+    		 * ..then update positions
+    		 */
+//    		for (Boid boid : boids) {
+//                boid.updatePos(model);
+//            }
+
     		if (view.isPresent()) {
             	view.get().update(framerate);
             	var t1 = System.currentTimeMillis();

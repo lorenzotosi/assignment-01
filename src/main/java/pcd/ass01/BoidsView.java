@@ -12,8 +12,6 @@ public class BoidsView implements ChangeListener {
 	private JFrame frame;
 	private BoidsPanel boidsPanel;
 	private JSlider cohesionSlider, separationSlider, alignmentSlider;
-	private Button start, stop;
-	private TextField tf;
 	private BoidsModel model;
 	private int width, height;
 	
@@ -47,23 +45,7 @@ public class BoidsView implements ChangeListener {
         slidersPanel.add(cohesionSlider);
 		        
 		cp.add(BorderLayout.SOUTH, slidersPanel);
-		var jp = new JPanel();
-		tf = new TextField();
-		tf.setPreferredSize(new Dimension(50, 30));
-		tf.setEditable(true);
-		tf.setEnabled(true);
-		tf.setSize(30, 10);
-		jp.add(tf);
-		jp.add(this.start = new Button("Start"));
-		jp.add(this.stop = new Button("Stop"));
 
-		start.addActionListener(e -> {
-			model.setBoids(Integer.parseInt(tf.getText()));
-			model.getThreads().forEach(Thread::start);
-		});
-		cp.add(BorderLayout.NORTH, jp);
-
-		frame.setContentPane(cp);
 		frame.setContentPane(cp);	
 		
         frame.setVisible(true);

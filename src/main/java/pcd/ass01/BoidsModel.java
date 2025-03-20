@@ -19,7 +19,6 @@ public class BoidsModel {
     private final double avoidRadius;
     private List<MultiWorker> threads;
     private CyclicBarrier barrier;
-
     private int numBoids;
     private boolean canStart = false;
 

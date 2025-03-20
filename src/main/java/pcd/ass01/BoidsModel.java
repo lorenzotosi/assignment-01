@@ -62,7 +62,11 @@ public class BoidsModel {
         }
 
     }
-    
+
+    public synchronized CyclicBarrier getBarrier() {
+        return this.barrier;
+    }
+
     public synchronized List<Boid> getBoids(){
     	return boids;
     }

@@ -38,6 +38,11 @@ public class BoidsSimulator {
 //    		for (Boid boid : boids) {
 //                boid.updatePos(model);
 //            }
+            try {
+                this.model.getBarrier().await();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
     		if (view.isPresent()) {
             	view.get().update(framerate);

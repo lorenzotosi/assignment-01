@@ -20,8 +20,9 @@ public class BoidsSimulator {
     }
       
     public void runSimulation() {
-        var boids = model.getThreads();
-        boids.forEach(Thread::start);
+        int nBoids = model.getThreads().stream().mapToInt(t -> t.getBoids().size()).sum();
+        System.out.println("Number of boids: " + nBoids);
+        model.getThreads().forEach(Thread::start);
     	while (true) {
             var t0 = System.currentTimeMillis();
     		/* 

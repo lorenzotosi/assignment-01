@@ -1,5 +1,6 @@
 package pcd.ass01;
 
+import worker.MultiWorker;
 import worker.Worker;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ public class BoidsModel {
     private final double maxSpeed;
     private final double perceptionRadius;
     private final double avoidRadius;
-    private List<Worker> threads;
+    private List<MultiWorker> threads;
     private final CyclicBarrier barrier;
 
     public BoidsModel(int nboids,  
@@ -42,12 +43,19 @@ public class BoidsModel {
         threads = new ArrayList<>();
         this.barrier = new CyclicBarrier(nboids);
 
-        for (int i = 0; i < nboids; i++) {
-        	P2d pos = new P2d(-width/2 + Math.random() * width, -height/2 + Math.random() * height);
-        	V2d vel = new V2d(Math.random() * maxSpeed/2 - maxSpeed/4, Math.random() * maxSpeed/2 - maxSpeed/4);
-            var b = new Boid(pos, vel);
-            boids.add(b);
-            var thread = new Worker(b, this, barrier);
+        int nThreads = Runtime.getRuntime().availableProcessors();
+        int nBoidsPerThread = nboids / nThreads;
+        int from = 0;
+        int to = nBoidsPerThread - 1;
+
+        for (int i = 0; i < nThreads; i++) {
+            var boids = new ArrayList<Boid>();
+        	for(int j = from; j <= to; j++) {
+                P2d pos = new P2d(-width/2 + Math.random() * width, -height/2 + Math.random() * height);
+                V2d vel = new V2d(Math.random() * maxSpeed/2 - maxSpeed/4, Math.random() * maxSpeed/2 - maxSpeed/4);
+                boids.add(new Boid(pos, vel));
+            }
+            var thread = new MultiWorker(boids, this, barrier);
             threads.add(thread);
         }
 
@@ -57,7 +65,7 @@ public class BoidsModel {
     	return boids;
     }
 
-    public synchronized List<Worker> getThreads(){
+    public synchronized List<MultiWorker> getThreads(){
         return threads;
     }
     

@@ -18,7 +18,11 @@ public class BoidsModel {
     private final double perceptionRadius;
     private final double avoidRadius;
     private List<MultiWorker> threads;
-    private final CyclicBarrier barrier;
+    private CyclicBarrier barrier;
+
+    private int numBoids;
+    private boolean canStart = false;
+
 
     public BoidsModel(int nboids,  
     						double initialSeparationWeight, 
@@ -28,7 +32,7 @@ public class BoidsModel {
     						double height,
     						double maxSpeed,
     						double perceptionRadius,
-    						double avoidRadius){
+    						double avoidRadius) {
         separationWeight = initialSeparationWeight;
         alignmentWeight = initialAlignmentWeight;
         cohesionWeight = initialCohesionWeight;
@@ -37,30 +41,32 @@ public class BoidsModel {
         this.maxSpeed = maxSpeed;
         this.perceptionRadius = perceptionRadius;
         this.avoidRadius = avoidRadius;
-        
-    	boids = new ArrayList<>();
+
+        boids = new ArrayList<>();
         threads = new ArrayList<>();
 
+    }
+
+    public synchronized void setBoids(final int nboids) {
+        boids.clear();
+        this.numBoids = nboids;
+        this.barrier = new CyclicBarrier(nboids + 1);
         int nThreads = 1; //Runtime.getRuntime().availableProcessors();
         int nBoidsPerThread = nboids / nThreads;
         int from = 0;
         int to = nBoidsPerThread - 1;
 
 
-        this.barrier = new CyclicBarrier(nThreads + 1);
-
         for (int i = 0; i < nThreads; i++) {
             var b = new ArrayList<Boid>();
-        	for(int j = from; j <= to; j++) {
-                P2d pos = new P2d(-width/2 + Math.random() * width, -height/2 + Math.random() * height);
-                V2d vel = new V2d(Math.random() * maxSpeed/2 - maxSpeed/4, Math.random() * maxSpeed/2 - maxSpeed/4);
+            for (int j = from; j <= to; j++) {
+                P2d pos = new P2d(-width / 2 + Math.random() * width, -height / 2 + Math.random() * height);
+                V2d vel = new V2d(Math.random() * maxSpeed / 2 - maxSpeed / 4, Math.random() * maxSpeed / 2 - maxSpeed / 4);
                 b.add(new Boid(pos, vel));
             }
             var thread = new MultiWorker(b, this, barrier);
             threads.add(thread);
-            this.boids.addAll(b);
         }
-
     }
 
     public synchronized CyclicBarrier getBarrier() {
@@ -133,5 +139,17 @@ public class BoidsModel {
 
     public synchronized double getPerceptionRadius() {
     	return perceptionRadius;
+    }
+
+    public synchronized boolean canStart() {
+        return this.canStart;
+    }
+
+    public synchronized void setCanStart() {
+        this.canStart = true;
+    }
+
+    public synchronized void stop() {
+        this.canStart = false;
     }
 }

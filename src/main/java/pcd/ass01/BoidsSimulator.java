@@ -17,29 +17,27 @@ public class BoidsSimulator {
     public void attachView(BoidsView view) {
     	this.view = Optional.of(view);
     }
-      
-    public void runSimulation() {
-        int nBoids = model.getThreads().stream().mapToInt(t -> t.getBoids().size()).sum();
-        System.out.println("Number of boids: " + nBoids);
-        model.getThreads().forEach(Thread::start);
 
+    public void runSimulation() {
         long lastTime = System.nanoTime();
 
         while (true) {
-            long now = System.nanoTime();
-            try {
-                this.model.getBarrier().await();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
 
-            //calculate framerate given frametime
-            framerate = (int) (1_000_000_000 / (now - lastTime));
+            if (model.canStart()) {
 
-            if (view.isPresent()) {
-                view.get().update(framerate);
+                long now = System.nanoTime();
+                try {
+                    this.model.getBarrier().await();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                //calculate framerate given frametime
+                framerate = (int) (1_000_000_000 / (now - lastTime));
+
+                view.ifPresent(boidsView -> boidsView.update(framerate));
+                lastTime = now;
             }
-            lastTime = now;
         }
     }
 }

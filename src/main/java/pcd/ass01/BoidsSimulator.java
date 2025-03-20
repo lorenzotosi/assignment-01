@@ -36,9 +36,7 @@ public class BoidsSimulator {
             //calculate framerate given frametime
             framerate = (int) (1_000_000_000 / (now - lastTime));
 
-            if (view.isPresent()) {
-                view.get().update(framerate);
-            }
+            view.ifPresent(boidsView -> boidsView.update(framerate));
             lastTime = now;
         }
     }

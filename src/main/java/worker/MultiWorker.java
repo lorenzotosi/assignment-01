@@ -26,19 +26,10 @@ public class MultiWorker extends Thread {
     public void run() {
         while (true) {
             try {
-            boids.forEach(boid -> {
-                //System.out.println("before");
-                boid.calculateVelocity(boidsModel);
-            });
+            boids.forEach(boid -> boid.calculateVelocity(boidsModel));
             barrier.await();
-            boids.forEach(boid -> {
-                //System.out.println("before2");
-                boid.updateVelocity(boidsModel);
-            });
-            boids.forEach(boid -> {
-                //System.out.println("after");
-                boid.updatePos(boidsModel);
-            });
+            boids.forEach(boid -> boid.updateVelocity(boidsModel));
+            boids.forEach(boid -> boid.updatePos(boidsModel));
             barrier.await();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

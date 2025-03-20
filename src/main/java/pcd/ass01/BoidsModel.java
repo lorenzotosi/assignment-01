@@ -1,7 +1,6 @@
 package pcd.ass01;
 
 import worker.MultiWorker;
-import worker.Worker;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -41,22 +40,25 @@ public class BoidsModel {
         
     	boids = new ArrayList<>();
         threads = new ArrayList<>();
-        this.barrier = new CyclicBarrier(nboids);
 
         int nThreads = Runtime.getRuntime().availableProcessors();
         int nBoidsPerThread = nboids / nThreads;
         int from = 0;
         int to = nBoidsPerThread - 1;
 
+
+        this.barrier = new CyclicBarrier(nThreads);
+
         for (int i = 0; i < nThreads; i++) {
-            var boids = new ArrayList<Boid>();
+            var b = new ArrayList<Boid>();
         	for(int j = from; j <= to; j++) {
                 P2d pos = new P2d(-width/2 + Math.random() * width, -height/2 + Math.random() * height);
                 V2d vel = new V2d(Math.random() * maxSpeed/2 - maxSpeed/4, Math.random() * maxSpeed/2 - maxSpeed/4);
-                boids.add(new Boid(pos, vel));
+                b.add(new Boid(pos, vel));
             }
-            var thread = new MultiWorker(boids, this, barrier);
+            var thread = new MultiWorker(b, this, barrier);
             threads.add(thread);
+            this.boids.addAll(b);
         }
 
     }

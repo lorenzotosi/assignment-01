@@ -7,7 +7,6 @@ public class BoidsSimulator {
     private BoidsModel model;
     private Optional<BoidsView> view;
     
-    private static final int FRAMERATE = 3000;
     private int framerate;
     
     public BoidsSimulator(BoidsModel model) {

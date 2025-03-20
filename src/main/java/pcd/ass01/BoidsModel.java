@@ -41,13 +41,13 @@ public class BoidsModel {
     	boids = new ArrayList<>();
         threads = new ArrayList<>();
 
-        int nThreads = Runtime.getRuntime().availableProcessors();
+        int nThreads = 1; //Runtime.getRuntime().availableProcessors();
         int nBoidsPerThread = nboids / nThreads;
         int from = 0;
         int to = nBoidsPerThread - 1;
 
 
-        this.barrier = new CyclicBarrier(nThreads);
+        this.barrier = new CyclicBarrier(nThreads + 1);
 
         for (int i = 0; i < nThreads; i++) {
             var b = new ArrayList<Boid>();

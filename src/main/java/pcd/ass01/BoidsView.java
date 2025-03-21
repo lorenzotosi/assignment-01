@@ -14,6 +14,8 @@ public class BoidsView implements ChangeListener {
 	private JSlider cohesionSlider, separationSlider, alignmentSlider;
 	private BoidsModel model;
 	private int width, height;
+
+	private BoidViewExtended bve;
 	
 	public BoidsView(BoidsModel model, int width, int height) {
 		this.model = model;
@@ -45,6 +47,9 @@ public class BoidsView implements ChangeListener {
         slidersPanel.add(cohesionSlider);
 		        
 		cp.add(BorderLayout.SOUTH, slidersPanel);
+
+		this.bve = new BoidViewExtended(model);
+		cp.add(BorderLayout.NORTH, bve.getNorthPanel());
 
 		frame.setContentPane(cp);	
 		

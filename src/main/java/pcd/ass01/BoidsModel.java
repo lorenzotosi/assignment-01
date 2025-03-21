@@ -18,7 +18,7 @@ public class BoidsModel {
     private final double perceptionRadius;
     private final double avoidRadius;
     private List<MultiWorker> threads;
-    private final CyclicBarrier barrier;
+    private CyclicBarrier barrier;
 
     public BoidsModel(int nboids,  
     						double initialSeparationWeight, 
@@ -41,17 +41,39 @@ public class BoidsModel {
     	boids = new ArrayList<>();
         threads = new ArrayList<>();
 
-        int nThreads = Runtime.getRuntime().availableProcessors();
+//        int nThreads = Runtime.getRuntime().availableProcessors() - 1;
+//        int nBoidsPerThread = nboids / nThreads;
+//        int from = 0;
+//        int to = nBoidsPerThread - 1;
+//
+//
+//        this.barrier = new CyclicBarrier(nThreads);
+//
+//        for (int i = 0; i < nThreads; i++) {
+//            var b = new ArrayList<Boid>();
+//        	for(int j = from; j <= to; j++) {
+//                P2d pos = new P2d(-width/2 + Math.random() * width, -height/2 + Math.random() * height);
+//                V2d vel = new V2d(Math.random() * maxSpeed/2 - maxSpeed/4, Math.random() * maxSpeed/2 - maxSpeed/4);
+//                b.add(new Boid(pos, vel));
+//            }
+//            var thread = new MultiWorker(b, this, barrier);
+//            threads.add(thread);
+//            this.boids.addAll(b);
+//        }
+
+    }
+
+    public void setupThreads(final int nboids) {
+        int nThreads = Runtime.getRuntime().availableProcessors() - 1;
         int nBoidsPerThread = nboids / nThreads;
         int from = 0;
         int to = nBoidsPerThread - 1;
 
-
-        this.barrier = new CyclicBarrier(nThreads + 1);
+        this.barrier = new CyclicBarrier(nThreads);
 
         for (int i = 0; i < nThreads; i++) {
             var b = new ArrayList<Boid>();
-        	for(int j = from; j <= to; j++) {
+            for(int j = from; j <= to; j++) {
                 P2d pos = new P2d(-width/2 + Math.random() * width, -height/2 + Math.random() * height);
                 V2d vel = new V2d(Math.random() * maxSpeed/2 - maxSpeed/4, Math.random() * maxSpeed/2 - maxSpeed/4);
                 b.add(new Boid(pos, vel));

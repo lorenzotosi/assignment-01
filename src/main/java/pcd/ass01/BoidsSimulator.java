@@ -23,22 +23,26 @@ public class BoidsSimulator {
 //        System.out.println("Number of boids: " + nBoids);
 //        model.getThreads().forEach(Thread::start);
 
-        long lastTime = System.nanoTime();
+        long timer = System.currentTimeMillis();
+        int frames = 0;
 
         while (true) {
             if (this.model.getBarrier() != null) {
-                long now = System.nanoTime();
                 try {
                     this.model.getBarrier().await();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                //calculate framerate given frametime
-                framerate = (int) (1_000_000_000 / (now - lastTime));
+                frames++;
+
+                if (System.currentTimeMillis() - timer > 1000) {
+                    framerate = frames;
+                    frames = 0;
+                    timer = System.currentTimeMillis();
+                }
 
                 view.ifPresent(boidsView -> boidsView.update(framerate));
-                lastTime = now;
             }
         }
     }

@@ -63,7 +63,7 @@ public class BoidsModel {
 
     }
 
-    public synchronized CyclicBarrier getBarrier() {
+    public CyclicBarrier getBarrier() {
         return this.barrier;
     }
 

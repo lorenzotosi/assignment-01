@@ -11,11 +11,13 @@ public class BoidTask implements Runnable {
     private final List<Boid> boids;
     private final BoidsModel boidsModel;
     private final CyclicBarrier barrier;
+    private final CyclicBarrier barrier2;
 
-    public BoidTask(List<Boid> boids, BoidsModel boidsModel, CyclicBarrier barrier) {
+    public BoidTask(List<Boid> boids, BoidsModel boidsModel, CyclicBarrier barrier, CyclicBarrier barrier1) {
         this.boids = boids;
         this.boidsModel = boidsModel;
         this.barrier = barrier;
+        this.barrier2 = barrier1;
     }
 
     @Override
@@ -26,7 +28,7 @@ public class BoidTask implements Runnable {
                 barrier.await();
                 boids.forEach(boid -> boid.updateVelocity(boidsModel));
                 boids.forEach(boid -> boid.updatePos(boidsModel));
-                barrier.await();
+                barrier2.await();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;

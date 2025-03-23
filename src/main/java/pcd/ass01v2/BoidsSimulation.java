@@ -25,9 +25,9 @@ public class BoidsSimulation {
     					ENVIRONMENT_WIDTH, ENVIRONMENT_HEIGHT,
     					MAX_SPEED,
     					PERCEPTION_RADIUS,
-    					AVOID_RADIUS); 
-    	var sim = new BoidsSimulator(model);
+    					AVOID_RADIUS);
 		var controller = new SimulationController(model);
+		var sim = new BoidsSimulator(controller);
     	var view = new BoidsView(controller, SCREEN_WIDTH, SCREEN_HEIGHT);
     	sim.attachView(view);
     	sim.runSimulation();

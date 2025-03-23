@@ -6,48 +6,22 @@ public class BoidsSimulator {
 
     private BoidsModel model;
     private Optional<BoidsView> view;
+    private SimulationController controller;
     
     private int framerate;
     
     public BoidsSimulator(BoidsModel model) {
         this.model = model;
         view = Optional.empty();
+        this.controller = new SimulationController(model);
     }
 
     public void attachView(BoidsView view) {
     	this.view = Optional.of(view);
     }
-      
-//    public void runSimulation() {
-////        int nBoids = model.getThreads().stream().mapToInt(t -> t.getBoids().size()).sum();
-////        System.out.println("Number of boids: " + nBoids);
-////        model.getThreads().forEach(Thread::start);
-//
-//        long timer = System.currentTimeMillis();
-//        int frames = 0;
-//
-//        while (true) {
-//            if (this.model.getBarrier() != null) {
-//                try {
-//                    this.model.getBarrier().await();
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//
-//                frames++;
-//
-//                if (System.currentTimeMillis() - timer > 1000) {
-//                    framerate = frames;
-//                    frames = 0;
-//                    timer = System.currentTimeMillis();
-//                }
-//
-//                view.ifPresent(boidsView -> boidsView.update(framerate));
-//            }
-//        }
-//    }
 
     public void runSimulation() {
+        controller.startSimulation();
         long timer = System.currentTimeMillis();
         int frames = 0;
         long frameDuration = 1000 / 200; // Durata di ogni frame in millisecondi per 200 FPS

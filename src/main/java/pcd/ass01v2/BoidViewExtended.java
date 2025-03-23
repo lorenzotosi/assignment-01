@@ -23,8 +23,8 @@ public class BoidViewExtended {
 
     private void createUIComponents() {
         start = createButton("Start", (x -> {
-            model.setupThreads(Integer.parseInt(boidsInput.getText()));
-            model.getThreads().forEach(Thread::start);
+            //model.setupThreads(Integer.parseInt(boidsInput.getText()));
+            //model.getThreads().forEach(Thread::start);
         }));
         stop = createButton("Stop", null);
         boidsInput = createTextField();

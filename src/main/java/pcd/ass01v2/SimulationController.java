@@ -10,7 +10,7 @@ import java.util.concurrent.Executors;
 
 public class SimulationController {
 
-    private ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private ExecutorService executor;
     private BoidsModel boidsModel;
     private CyclicBarrier barrier;
 
@@ -18,14 +18,23 @@ public class SimulationController {
 
     public SimulationController(BoidsModel boidsModel) {
         this.boidsModel = boidsModel;
+        this.executor = Executors.newCachedThreadPool();
     }
 
     public void startSimulation(final int numBoids) {
-
         boidsModel.setupModel(numBoids);
-
         var boids = boidsModel.getBoids();
+        setupBoidTask(numBoids, boids);
+        startExecutor();
+    }
 
+    private void startExecutor() {
+        for (BoidTask task : boidTaskList) {
+            executor.execute(task);
+        }
+    }
+
+    private void setupBoidTask(int numBoids, List<Boid> boids) {
         int nThreads = Runtime.getRuntime().availableProcessors() - 1;
         int nBoidsPerThread = numBoids / nThreads;
         int from = 0;
@@ -40,10 +49,6 @@ public class SimulationController {
             }
             var task = new BoidTask(boidsPerTask, boidsModel, barrier);
             boidTaskList.add(task);
-        }
-
-        for (BoidTask task : boidTaskList) {
-            executor.execute(task);
         }
     }
 

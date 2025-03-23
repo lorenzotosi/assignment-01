@@ -6,14 +6,15 @@ import java.awt.event.ActionListener;
 
 public class BoidViewExtended {
 
-    private BoidsModel model;
     private Button start;
     private Button stop;
     private TextField boidsInput;
     private JPanel northPanel;
+    private SimulationController simulationController;
 
-    public BoidViewExtended(final BoidsModel model) {
-        this.model = model;
+    public BoidViewExtended(final SimulationController controller) {
+        this.simulationController = controller;
+
         createUIComponents();
     }
 
@@ -23,8 +24,8 @@ public class BoidViewExtended {
 
     private void createUIComponents() {
         start = createButton("Start", (x -> {
-            //model.setupThreads(Integer.parseInt(boidsInput.getText()));
-            //model.getThreads().forEach(Thread::start);
+            int boids = Integer.parseInt(boidsInput.getText());
+            simulationController.startSimulation(boids);
         }));
         stop = createButton("Stop", null);
         boidsInput = createTextField();

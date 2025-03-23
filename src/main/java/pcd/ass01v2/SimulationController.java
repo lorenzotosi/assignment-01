@@ -18,32 +18,36 @@ public class SimulationController {
 
     public SimulationController(BoidsModel boidsModel) {
         this.boidsModel = boidsModel;
+    }
+
+    public void startSimulation(final int numBoids) {
+
+        boidsModel.setupModel(numBoids);
 
         var boids = boidsModel.getBoids();
 
         int nThreads = Runtime.getRuntime().availableProcessors() - 1;
-        int nBoidsPerThread = boidsModel.getNumBoids() / nThreads;
+        int nBoidsPerThread = numBoids / nThreads;
         int from = 0;
         int to = nBoidsPerThread - 1;
 
         this.barrier = new CyclicBarrier(nThreads);
 
         for (int i = 0; i < nThreads; i++) {
-            var boidPerTask = new ArrayList<Boid>();
+            var boidsPerTask = new ArrayList<Boid>();
             for(int j = from; j <= to; j++) {
-                boidPerTask.add(boids.get(j));
+                boidsPerTask.add(boids.get(j));
             }
-            var task = new BoidTask(boidPerTask, boidsModel, barrier);
+            var task = new BoidTask(boidsPerTask, boidsModel, barrier);
             boidTaskList.add(task);
         }
 
-    }
-
-    public void startSimulation() {
-        for (int i = 0; i < boidTaskList.size(); i++) {
-            var task = boidTaskList.get(i);
+        for (BoidTask task : boidTaskList) {
             executor.execute(task);
         }
     }
 
+    public BoidsModel getModel() {
+        return boidsModel;
+    }
 }

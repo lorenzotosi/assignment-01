@@ -17,7 +17,9 @@ public class BoidsModel {
     private final double perceptionRadius;
     private final double avoidRadius;
     private List<MultiWorker> threads;
-    private CyclicBarrier barrier;
+    private CyclicBarrier phase1Barrier;
+    private CyclicBarrier phase2Barrier;
+    private volatile int frameCompleted = 0;
 
     public BoidsModel(int nboids,  
     						double initialSeparationWeight, 
@@ -65,10 +67,16 @@ public class BoidsModel {
     public void setupThreads(final int nboids) {
         int nThreads = Runtime.getRuntime().availableProcessors() - 1;
         int nBoidsPerThread = nboids / nThreads;
+
+        phase1Barrier = new CyclicBarrier(nThreads);
+        phase2Barrier = new CyclicBarrier(nThreads, () -> {
+            synchronized (this) {
+                frameCompleted++;
+            }
+        });
+
         int from = 0;
         int to = nBoidsPerThread - 1;
-
-        this.barrier = new CyclicBarrier(nThreads);
 
         for (int i = 0; i < nThreads; i++) {
             var b = new ArrayList<Boid>();
@@ -77,15 +85,17 @@ public class BoidsModel {
                 V2d vel = new V2d(Math.random() * maxSpeed/2 - maxSpeed/4, Math.random() * maxSpeed/2 - maxSpeed/4);
                 b.add(new Boid(pos, vel));
             }
-            var thread = new MultiWorker(b, this, barrier);
+            var thread = new MultiWorker(b, this, phase1Barrier, phase2Barrier);
             threads.add(thread);
             this.boids.addAll(b);
         }
 
     }
 
-    public CyclicBarrier getBarrier() {
-        return this.barrier;
+    public synchronized int getAndResetFrameCompleted() {
+        int current = frameCompleted;
+        frameCompleted = 0;
+        return current;
     }
 
     public List<Boid> getBoids(){

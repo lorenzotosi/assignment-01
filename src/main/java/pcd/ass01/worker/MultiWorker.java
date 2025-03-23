@@ -11,12 +11,14 @@ public class MultiWorker extends Thread {
 
     private final List<Boid> boids;
     private final BoidsModel boidsModel;
-    private final CyclicBarrier barrier;
+    private final CyclicBarrier phase1Barrier;
+    private final CyclicBarrier phase2Barrier;
 
-    public MultiWorker(List<Boid> boids, BoidsModel boidsModel, CyclicBarrier barrier) {
+    public MultiWorker(List<Boid> boids, BoidsModel boidsModel, CyclicBarrier phase1Barrier, CyclicBarrier phase2Barrier) {
         this.boids = boids;
         this.boidsModel = boidsModel;
-        this.barrier = barrier;
+        this.phase1Barrier = phase1Barrier;
+        this.phase2Barrier = phase2Barrier;
     }
 
     public List<Boid> getBoids() {
@@ -27,10 +29,10 @@ public class MultiWorker extends Thread {
         while (true) {
             try {
             boids.forEach(boid -> boid.calculateVelocity(boidsModel));
-            barrier.await();
+            phase1Barrier.await();
             boids.forEach(boid -> boid.updateVelocity(boidsModel));
             boids.forEach(boid -> boid.updatePos(boidsModel));
-            barrier.await();
+            phase2Barrier.await();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;

@@ -1,6 +1,7 @@
-package pcd.ass01;
+package pcd.ass01v2;
 
-import pcd.ass01.worker.MultiWorker;
+import pcd.ass01v2.worker.MultiWorker;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CyclicBarrier;
@@ -17,9 +18,7 @@ public class BoidsModel {
     private final double perceptionRadius;
     private final double avoidRadius;
     private List<MultiWorker> threads;
-    private CyclicBarrier phase1Barrier;
-    private CyclicBarrier phase2Barrier;
-    private volatile int frameCompleted = 0;
+    private CyclicBarrier barrier;
 
     public BoidsModel(int nboids,  
     						double initialSeparationWeight, 
@@ -67,17 +66,10 @@ public class BoidsModel {
     public void setupThreads(final int nboids) {
         int nThreads = Runtime.getRuntime().availableProcessors() - 1;
         int nBoidsPerThread = nboids / nThreads;
-        int poorBoids = nboids % nThreads;
-
-        phase1Barrier = new CyclicBarrier(nThreads);
-        phase2Barrier = new CyclicBarrier(nThreads, () -> {
-            synchronized (this) {
-                frameCompleted++;
-            }
-        });
-
         int from = 0;
         int to = nBoidsPerThread - 1;
+
+        this.barrier = new CyclicBarrier(nThreads);
 
         for (int i = 0; i < nThreads; i++) {
             var b = new ArrayList<Boid>();
@@ -86,25 +78,15 @@ public class BoidsModel {
                 V2d vel = new V2d(Math.random() * maxSpeed/2 - maxSpeed/4, Math.random() * maxSpeed/2 - maxSpeed/4);
                 b.add(new Boid(pos, vel));
             }
-
-            if (poorBoids != 0) {
-                P2d pos = new P2d(-width/2 + Math.random() * width, -height/2 + Math.random() * height);
-                V2d vel = new V2d(Math.random() * maxSpeed/2 - maxSpeed/4, Math.random() * maxSpeed/2 - maxSpeed/4);
-                b.add(new Boid(pos, vel));
-                poorBoids--;
-            }
-
-            var thread = new MultiWorker(b, this, phase1Barrier, phase2Barrier);
+            var thread = new MultiWorker(b, this, barrier);
             threads.add(thread);
             this.boids.addAll(b);
         }
 
     }
 
-    public synchronized int getAndResetFrameCompleted() {
-        int current = frameCompleted;
-        frameCompleted = 0;
-        return current;
+    public CyclicBarrier getBarrier() {
+        return this.barrier;
     }
 
     public List<Boid> getBoids(){

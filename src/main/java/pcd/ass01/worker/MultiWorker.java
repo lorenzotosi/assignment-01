@@ -1,4 +1,4 @@
-package worker;
+package pcd.ass01.worker;
 
 import pcd.ass01.Boid;
 import pcd.ass01.BoidsModel;

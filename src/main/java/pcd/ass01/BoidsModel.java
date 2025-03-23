@@ -1,9 +1,8 @@
 package pcd.ass01;
 
-import worker.MultiWorker;
+import pcd.ass01.worker.MultiWorker;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CyclicBarrier;
 
 public class BoidsModel {

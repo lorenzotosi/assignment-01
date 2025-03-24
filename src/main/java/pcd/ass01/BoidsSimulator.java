@@ -4,6 +4,7 @@ import java.util.Optional;
 
 public class BoidsSimulator {
 
+    private final static int TARGET_FPS = 5;
     private BoidsModel model;
     private Optional<BoidsView> view;
     
@@ -48,36 +49,30 @@ public class BoidsSimulator {
 //    }
 
     public void runSimulation() {
-        long timer = System.currentTimeMillis();
+        long lastSecond = System.currentTimeMillis();
         int frames = 0;
-        long frameDuration = 1000 / 200; // Durata di ogni frame in millisecondi per 200 FPS
 
         while (true) {
-            long startTime = System.currentTimeMillis();
+            long currentTime = System.currentTimeMillis();
 
             // Simula il comportamento dei boids qui
             // model.updateBoids();
 
-            frames++;
-
-            if (System.currentTimeMillis() - timer > 1000) {
+            if(currentTime - lastSecond >= 1000) {
                 framerate = frames;
                 frames = 0;
-                timer = System.currentTimeMillis();
+                lastSecond = currentTime;
             }
 
             view.ifPresent(boidsView -> boidsView.update(framerate));
 
-            long endTime = System.currentTimeMillis();
-            long elapsedTime = endTime - startTime;
+            int completed = model.getAndResetFrameCompleted();
+            frames += completed;
 
-            // Aggiungi un ritardo per controllare la velocità del ciclo
-            if (elapsedTime < frameDuration) {
-                try {
-                    Thread.sleep(frameDuration - elapsedTime);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            try {
+                Thread.sleep(1000 / TARGET_FPS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }

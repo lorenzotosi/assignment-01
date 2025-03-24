@@ -26,6 +26,9 @@ public class BoidsSimulator {
         while (true) {
             long currentTime = System.currentTimeMillis();
 
+            if (simulationController.isStarted())
+                simulationController.startExecutor();
+
             frames++;
 
             if (currentTime - lastSecond >= 1000) {

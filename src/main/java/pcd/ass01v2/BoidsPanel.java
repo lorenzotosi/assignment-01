@@ -2,15 +2,18 @@ package pcd.ass01v2;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Future;
 
 public class BoidsPanel extends JPanel {
 
 	private BoidsView view;
-	private SimulationController controler;
+	private SimulationController controller;
     private int framerate;
 
     public BoidsPanel(BoidsView view, SimulationController controller) {
-    	this.controler = controller;
+    	this.controller = controller;
     	this.view = view;
     }
 
@@ -25,13 +28,12 @@ public class BoidsPanel extends JPanel {
         
         var w = view.getWidth();
         var h = view.getHeight();
-        var envWidth = controler.getModel().getWidth();
+        var envWidth = controller.getModel().getWidth();
         var xScale = w/envWidth;
         // var envHeight = model.getHeight();
         // var yScale = h/envHeight;
 
-        //TODO errore qui
-        var boids = controler.getModel().getBoids();
+        var boids = controller.getModel().getBoids();
 
         g.setColor(Color.BLUE);
         for (Boid boid : boids) {

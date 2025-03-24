@@ -1,6 +1,7 @@
-package pcd.ass01;
+package pcd.ass01v2;
 
-import pcd.ass01.worker.MultiWorker;
+import pcd.ass01v2.worker.MultiWorker;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CyclicBarrier;
@@ -65,7 +66,6 @@ public class BoidsModel {
     public void setupThreads(final int nboids) {
         int nThreads = Runtime.getRuntime().availableProcessors() - 1;
         int nBoidsPerThread = nboids / nThreads;
-        int poorBoids = nboids % nThreads;
         int from = 0;
         int to = nBoidsPerThread - 1;
 
@@ -78,14 +78,6 @@ public class BoidsModel {
                 V2d vel = new V2d(Math.random() * maxSpeed/2 - maxSpeed/4, Math.random() * maxSpeed/2 - maxSpeed/4);
                 b.add(new Boid(pos, vel));
             }
-
-            if (poorBoids != 0) {
-                P2d pos = new P2d(-width/2 + Math.random() * width, -height/2 + Math.random() * height);
-                V2d vel = new V2d(Math.random() * maxSpeed/2 - maxSpeed/4, Math.random() * maxSpeed/2 - maxSpeed/4);
-                b.add(new Boid(pos, vel));
-                poorBoids--;
-            }
-
             var thread = new MultiWorker(b, this, barrier);
             threads.add(thread);
             this.boids.addAll(b);

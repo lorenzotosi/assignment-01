@@ -1,5 +1,7 @@
 package pcd.ass01;
 
+import pcd.ass01.worker.MultiWorker;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -23,10 +25,17 @@ public class BoidViewExtended {
 
     private void createUIComponents() {
         start = createButton("Start", (x -> {
-            model.setupThreads(Integer.parseInt(boidsInput.getText()));
-            model.getThreads().forEach(Thread::start);
+            if (model.isSettedUp()) {
+                model.getThreads().forEach(MultiWorker::resumeWorker);
+            } else {
+                model.setupThreads(Integer.parseInt(boidsInput.getText()));
+                model.getThreads().forEach(Thread::start);
+            }
         }));
-        stop = createButton("Stop", null);
+        stop = createButton("Stop", (x -> {
+            model.getThreads().forEach(MultiWorker::stopWorker);
+        }));
+
         boidsInput = createTextField();
         northPanel = createNorthPanel();
     }

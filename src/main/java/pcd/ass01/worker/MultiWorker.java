@@ -13,13 +13,24 @@ public class MultiWorker extends Thread {
     private final BoidsModel boidsModel;
     private final CyclicBarrier phase1Barrier;
     private final CyclicBarrier phase2Barrier;
+    private boolean go;
 
     public MultiWorker(List<Boid> boids, BoidsModel boidsModel, CyclicBarrier phase1Barrier, CyclicBarrier phase2Barrier) {
         this.boids = boids;
         this.boidsModel = boidsModel;
         this.phase1Barrier = phase1Barrier;
         this.phase2Barrier = phase2Barrier;
+        this.go = true;
     }
+
+    public void stopWorker(){
+        this.go = false;
+    }
+
+    public void resumeWorker(){
+        this.go = true;
+    }
+
 
     public List<Boid> getBoids() {
         return boids;
@@ -27,19 +38,28 @@ public class MultiWorker extends Thread {
 
     public void run() {
         while (true) {
-            try {
-            boids.forEach(boid -> boid.calculateVelocity(boidsModel));
-            phase1Barrier.await();
-            boids.forEach(boid -> boid.updateVelocity(boidsModel));
-            boids.forEach(boid -> boid.updatePos(boidsModel));
-            phase2Barrier.await();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
-            } catch (BrokenBarrierException e) {
-                throw new RuntimeException(e);
+            if (go) {
+                try {
+                    boids.forEach(boid -> boid.calculateVelocity(boidsModel));
+                    phase1Barrier.await();
+                    boids.forEach(boid -> boid.updateVelocity(boidsModel));
+                    boids.forEach(boid -> boid.updatePos(boidsModel));
+                    phase2Barrier.await();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                } catch (BrokenBarrierException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                try {
+                    sleep(200);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
-        }
+
+            }
 
     }
 

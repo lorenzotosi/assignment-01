@@ -20,6 +20,7 @@ public class BoidsModel {
     private CyclicBarrier phase1Barrier;
     private CyclicBarrier phase2Barrier;
     private volatile int frameCompleted = 0;
+    private boolean settedUp = false;
 
     public BoidsModel(int nboids,  
     						double initialSeparationWeight, 
@@ -63,6 +64,9 @@ public class BoidsModel {
 //        }
 
     }
+    public boolean isSettedUp(){
+        return this.settedUp;
+    }
 
     public void setupThreads(final int nboids) {
         int nThreads = Runtime.getRuntime().availableProcessors() - 1;
@@ -98,7 +102,7 @@ public class BoidsModel {
             threads.add(thread);
             this.boids.addAll(b);
         }
-
+        this.settedUp = true;
     }
 
     public synchronized int getAndResetFrameCompleted() {

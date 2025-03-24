@@ -4,7 +4,7 @@ import java.util.Optional;
 
 public class BoidsSimulator {
 
-    private final static int TARGET_FPS = 5;
+    private final static int TARGET_FPS = 20;
     private BoidsModel model;
     private Optional<BoidsView> view;
     

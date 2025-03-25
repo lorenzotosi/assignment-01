@@ -30,7 +30,6 @@ public class BoidsSimulator {
 
             try {
                 model.execute1(countDownLatch);
-                System.out.println("exec1");
                 countDownLatch.await();
             } catch (InterruptedException e) {
                 System.out.println("Boids simulation interrupted, " + e.getMessage());
@@ -39,7 +38,6 @@ public class BoidsSimulator {
             }
 
             try {
-                System.out.println("exec2");
                 model.execute2(countDownLatch);
                 countDownLatch.await();
             } catch (InterruptedException e) {

@@ -22,7 +22,7 @@ public class SimulationMonitor {
             try {
                 wait();
             } catch (InterruptedException e) {
-
+                System.out.println("Simulation interrupted, " + e.getMessage());
             }
         }
     }

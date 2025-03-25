@@ -24,8 +24,12 @@ public class BoidViewExtended {
 
     private void createUIComponents() {
         start = createButton("Start", (x -> {
-            int boids = Integer.parseInt(boidsInput.getText());
-            simulationController.startSimulation(boids);
+            if (this.simulationController.isStarted()) {
+                //TODO
+            } else {
+                int boids = Integer.parseInt(boidsInput.getText());
+                simulationController.startSimulation(boids);
+            }
         }));
         stop = createButton("Stop", null);
         boidsInput = createTextField();

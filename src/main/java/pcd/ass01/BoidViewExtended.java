@@ -25,15 +25,16 @@ public class BoidViewExtended {
 
     private void createUIComponents() {
         start = createButton("Start", (x -> {
-            if (model.isSettedUp()) {
-                model.getThreads().forEach(MultiWorker::resumeWorker);
-            } else {
+            if (model.isFirstStart()) {
+                model.getSimulationMonitor().startSimulation();
                 model.setupThreads(Integer.parseInt(boidsInput.getText()));
                 model.getThreads().forEach(Thread::start);
+            } else if (!model.getSimulationMonitor().isSimulationRunning()) {
+                model.getSimulationMonitor().startSimulation();
             }
         }));
         stop = createButton("Stop", (x -> {
-            model.getThreads().forEach(MultiWorker::stopWorker);
+            model.getSimulationMonitor().stopSimulation();
         }));
 
         boidsInput = createTextField();

@@ -47,15 +47,21 @@ public class SimulationController {
 
 
     private void setupBoidTask(int numBoids, List<Boid> boids) {
-        int nThreads = Runtime.getRuntime().availableProcessors() + 1;
+        int nThreads = Runtime.getRuntime().availableProcessors() - 1;
         int nBoidsPerThread = numBoids / nThreads;
+        int poorBoids = numBoids % nThreads;
+
         int from = 0;
         int to = nBoidsPerThread - 1;
 
         for (int i = 0; i < nThreads; i++) {
             var boidsPerTask = new ArrayList<Boid>();
             for(int j = from; j <= to; j++) {
-                boidsPerTask.add(boids.get(j));
+                boidsPerTask.add(boids.get((i * nBoidsPerThread) + j));
+            }
+            if (poorBoids != 0) {
+                boidsPerTask.add(boids.get(boids.size() - poorBoids));
+                poorBoids--;
             }
             var task = new CalculateBoidVelocityTask(boidsPerTask, this);
             boidTaskList.add(task);

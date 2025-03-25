@@ -8,9 +8,9 @@ public class Boid {
     private P2d pos;
     private V2d vel;
 
-    private V2d alignment;
-    private V2d separation;
-    private V2d cohesion;
+    private V2d alignment = new V2d(0, 0);
+    private V2d separation = new V2d(0, 0);
+    private V2d cohesion = new V2d(0, 0);
 
     public Boid(P2d pos, V2d vel) {
     	this.pos = pos;

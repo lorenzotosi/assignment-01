@@ -1,7 +1,5 @@
 package pcd.ass01;
 
-import pcd.ass01.worker.MultiWorker;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -10,6 +8,7 @@ public class BoidViewExtended {
 
     private BoidsModel model;
     private Button start;
+    private Button suspend;
     private Button stop;
     private TextField boidsInput;
     private JPanel northPanel;
@@ -23,6 +22,10 @@ public class BoidViewExtended {
         return northPanel;
     }
 
+    public Button getStop() {
+        return stop;
+    }
+
     private void createUIComponents() {
         start = createButton("Start", (x -> {
             if (model.isFirstStart()) {
@@ -33,10 +36,11 @@ public class BoidViewExtended {
                 model.getSimulationMonitor().startSimulation();
             }
         }));
-        stop = createButton("Stop", (x -> {
+        suspend = createButton("Suspend", (x -> {
             model.getSimulationMonitor().stopSimulation();
         }));
 
+        stop = createButton("Stop", null);
         boidsInput = createTextField();
         northPanel = createNorthPanel();
     }
@@ -51,6 +55,7 @@ public class BoidViewExtended {
         JPanel panel = new JPanel();
         panel.add(boidsInput);
         panel.add(start);
+        panel.add(suspend);
         panel.add(stop);
         return panel;
     }

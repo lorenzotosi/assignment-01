@@ -14,7 +14,7 @@ public class BoidsView implements ChangeListener {
 	private BoidsModel model;
 	private int width, height;
 
-	//private BoidViewExtended bve;
+	private BoidViewExtended bve;
 	
 	public BoidsView(BoidsModel model, int width, int height) {
 		this.model = model;
@@ -47,7 +47,15 @@ public class BoidsView implements ChangeListener {
 		        
 		cp.add(BorderLayout.SOUTH, slidersPanel);
 
-		cp.add(BorderLayout.NORTH, new BoidViewExtended(model).getNorthPanel());
+		bve = new BoidViewExtended(model);
+
+		bve.getStop().addActionListener(x -> {model.getSimulationMonitor().stopSimulation();
+			model.setupThreads(0);
+			model.resetFirstStart();
+			this.update(0);
+		});
+
+		cp.add(BorderLayout.NORTH, bve.getNorthPanel());
 
 		frame.setContentPane(cp);	
 		

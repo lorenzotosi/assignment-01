@@ -22,11 +22,18 @@ public class BoidViewExtended {
         return northPanel;
     }
 
+    public Button getStop() {
+        return stop;
+    }
+
     private void createUIComponents() {
         start = createButton("Start", (x -> {
             if (model.isFirstStart()) {
-                model.setupThreads(Integer.parseInt(boidsInput.getText()));
-                model.getSimulationMonitor().startSimulation();
+                int boidsNumber = Integer.parseInt(boidsInput.getText());
+                if(boidsNumber > 0){
+                    model.setupThreads(boidsNumber);
+                    model.getSimulationMonitor().startSimulation();
+                }
             } else if (!model.getSimulationMonitor().isSimulationRunning()) {
                 model.getSimulationMonitor().startSimulation();
             }
@@ -34,11 +41,7 @@ public class BoidViewExtended {
         suspend = createButton("Suspend", (x -> {
             model.getSimulationMonitor().stopSimulation();
         }));
-        stop = createButton("Stop", (x -> {
-            model.getSimulationMonitor().stopSimulation();
-            model.setupThreads(Integer.parseInt(boidsInput.getText()));
-            model.getSimulationMonitor().startSimulation();
-        }));
+        stop = createButton("Stop", null);
 
         boidsInput = createTextField();
         northPanel = createNorthPanel();

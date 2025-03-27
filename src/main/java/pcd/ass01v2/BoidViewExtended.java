@@ -8,6 +8,7 @@ public class BoidViewExtended {
 
     private BoidsModel model;
     private Button start;
+    private Button suspend;
     private Button stop;
     private TextField boidsInput;
     private JPanel northPanel;
@@ -30,8 +31,13 @@ public class BoidViewExtended {
                 model.getSimulationMonitor().startSimulation();
             }
         }));
+        suspend = createButton("Suspend", (x -> {
+            model.getSimulationMonitor().stopSimulation();
+        }));
         stop = createButton("Stop", (x -> {
             model.getSimulationMonitor().stopSimulation();
+            model.setupThreads(Integer.parseInt(boidsInput.getText()));
+            model.getSimulationMonitor().startSimulation();
         }));
 
         boidsInput = createTextField();
@@ -48,6 +54,7 @@ public class BoidViewExtended {
         JPanel panel = new JPanel();
         panel.add(boidsInput);
         panel.add(start);
+        panel.add(suspend);
         panel.add(stop);
         return panel;
     }

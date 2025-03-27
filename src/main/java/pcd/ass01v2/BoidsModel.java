@@ -56,6 +56,10 @@ public class BoidsModel {
     }
 
     public void setupThreads(final int nboids) {
+        boids.clear();
+        updateTask.clear();
+        calculateTask.clear();
+
         firstStart = false;
         int nBoidsPerThread = nboids / N_THREADS;
         int poorBoids = nboids % N_THREADS;

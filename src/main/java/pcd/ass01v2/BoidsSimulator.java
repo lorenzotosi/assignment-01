@@ -23,10 +23,15 @@ public class BoidsSimulator {
     }
       
     public void runSimulation() {
+        notifyRunning();
         while (true) {
             countDownLatch = new CountDownLatch(BoidsModel.N_THREADS);
             var t0 = System.currentTimeMillis();
-            model.getSimulationMonitor().waitIfSimulationIsStopped();
+            if (!model.getSimulationMonitor().isSimulationRunning()){
+                notifyStop();
+                model.getSimulationMonitor().waitIfSimulationIsStopped();
+                notifyRunning();
+            }
 
             try {
                 model.execute1(countDownLatch);
@@ -63,4 +68,12 @@ public class BoidsSimulator {
             }
             }
         }
+
+    private void notifyRunning() {
+        model.getSimulationMonitor().simulatorRunning();
+    }
+
+    private void notifyStop() {
+        model.getSimulationMonitor().simulatorStopped();
+    }
 }

@@ -1,26 +1,28 @@
 package pcd.ass01v2.monitor;
 
 public class SimulationMonitor {
+    private static final boolean RUNNING = true;
+    private static final boolean STOPPED = false;
 
-    private boolean simulationIsRunning = false;
-    private boolean simulatorStopped = true;
+    private boolean simulationFlag = STOPPED;
+    private boolean simulatorActualState = STOPPED;
 
     public synchronized boolean isSimulationRunning(){
-        return simulationIsRunning;
+        return this.simulationFlag;
     }
 
     public synchronized void startSimulation(){
-        simulationIsRunning = true;
+        simulationFlag = RUNNING;
         notifyAll();
     }
 
     public synchronized void stopSimulation(){
-        simulationIsRunning = false;
-        waitSimulatorStop();
+        simulationFlag = STOPPED;
+        waitSimulatorToStop();
     }
 
-    private void waitSimulatorStop() {
-        while (!simulatorStopped) {
+    private void waitSimulatorToStop() {
+        while (simulatorActualState == RUNNING) {
             try {
                 wait();
             } catch (InterruptedException e) {
@@ -30,7 +32,7 @@ public class SimulationMonitor {
     }
 
     public synchronized void waitIfSimulationIsStopped() {
-        while (!this.simulationIsRunning) {
+        while (this.simulationFlag == STOPPED) {
             try {
                 wait();
             } catch (InterruptedException e) {
@@ -39,15 +41,12 @@ public class SimulationMonitor {
         }
     }
 
-    public synchronized void simulatorStopped() {
-        this.simulatorStopped = true;
+    public synchronized void simulatorSafelyStopped() {
+        this.simulatorActualState = STOPPED;
         notifyAll();
     }
-    public synchronized void simulatorRunning() {
-        this.simulatorStopped = false;
+    public synchronized void simulatorSafelyRunning() {
+        this.simulatorActualState = RUNNING;
         notifyAll();
-    }
-    public synchronized boolean isSimulatorStopped(){
-        return this.simulatorStopped;
     }
 }

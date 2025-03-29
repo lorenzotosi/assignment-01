@@ -18,11 +18,11 @@ public class BoidsModel {
     private final double maxSpeed;
     private final double perceptionRadius;
     private final double avoidRadius;
-    private List<MultiWorker> threads;
+    private final List<MultiWorker> threads;
     private CyclicBarrier phase1Barrier;
     private CyclicBarrier phase2Barrier;
     private volatile int frameCompleted = 0;
-    private SimulationMonitor simulationMonitor;
+    private final SimulationMonitor simulationMonitor;
     private boolean firstStart = true;
 
     public BoidsModel(int nboids,
@@ -49,46 +49,58 @@ public class BoidsModel {
         threads = new ArrayList<>();
     }
 
-    public void setupThreads(final int nboids) {
-        boids.clear();
-        threads.clear();
-        if (nboids > 0) {
-            firstStart = false;
-            int nThreads = Runtime.getRuntime().availableProcessors() + 1;
-            int nBoidsPerThread = nboids / nThreads;
-            int poorBoids = nboids % nThreads;
+    public void stopSimulation() {
+        simulationMonitor.startSimulation();
+        threads.forEach(MultiWorker::stopGracefully);
 
-            phase1Barrier = new CyclicBarrier(nThreads);
-            phase2Barrier = new CyclicBarrier(nThreads, () -> {
-                synchronized (this) {
-                    frameCompleted++;
-                }
-            });
-
-            int from = 0;
-            int to = nBoidsPerThread - 1;
-
-            for (int i = 0; i < nThreads; i++) {
-                var b = new ArrayList<Boid>();
-                for (int j = from; j <= to; j++) {
-                    P2d pos = new P2d(-width / 2 + Math.random() * width, -height / 2 + Math.random() * height);
-                    V2d vel = new V2d(Math.random() * maxSpeed / 2 - maxSpeed / 4, Math.random() * maxSpeed / 2 - maxSpeed / 4);
-                    b.add(new Boid(pos, vel));
-                }
-
-                if (poorBoids != 0) {
-                    P2d pos = new P2d(-width / 2 + Math.random() * width, -height / 2 + Math.random() * height);
-                    V2d vel = new V2d(Math.random() * maxSpeed / 2 - maxSpeed / 4, Math.random() * maxSpeed / 2 - maxSpeed / 4);
-                    b.add(new Boid(pos, vel));
-                    poorBoids--;
-                }
-
-                var thread = new MultiWorker(b, this, phase1Barrier, phase2Barrier, simulationMonitor);
-                threads.add(thread);
-                this.boids.addAll(b);
+        threads.forEach(thread -> {;
+            try {
+                thread.join(2000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
-        }
+        });
 
+        threads.clear();
+        boids.clear();
+        firstStart = true;
+    }
+
+    public void setupThreads(final int nboids) {
+        firstStart = false;
+        int nThreads = Runtime.getRuntime().availableProcessors() + 1;
+        int nBoidsPerThread = nboids / nThreads;
+        int poorBoids = nboids % nThreads;
+
+        phase1Barrier = new CyclicBarrier(nThreads);
+        phase2Barrier = new CyclicBarrier(nThreads, () -> {
+            synchronized (this) {
+                frameCompleted++;
+            }
+        });
+
+        int from = 0;
+        int to = nBoidsPerThread - 1;
+
+        for (int i = 0; i < nThreads; i++) {
+            var b = new ArrayList<Boid>();
+            for (int j = from; j <= to; j++) {
+                P2d pos = new P2d(-width / 2 + Math.random() * width, -height / 2 + Math.random() * height);
+                V2d vel = new V2d(Math.random() * maxSpeed / 2 - maxSpeed / 4, Math.random() * maxSpeed / 2 - maxSpeed / 4);
+                b.add(new Boid(pos, vel));
+            }
+
+            if (poorBoids != 0) {
+                P2d pos = new P2d(-width / 2 + Math.random() * width, -height / 2 + Math.random() * height);
+                V2d vel = new V2d(Math.random() * maxSpeed / 2 - maxSpeed / 4, Math.random() * maxSpeed / 2 - maxSpeed / 4);
+                b.add(new Boid(pos, vel));
+                poorBoids--;
+            }
+
+            var thread = new MultiWorker(b, this, phase1Barrier, phase2Barrier, simulationMonitor);
+            threads.add(thread);
+            this.boids.addAll(b);
+        }
     }
 
     public synchronized int getAndResetFrameCompleted() {

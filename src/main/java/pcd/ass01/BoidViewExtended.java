@@ -31,7 +31,7 @@ public class BoidViewExtended {
             if (model.isFirstStart()) {
                 model.getSimulationMonitor().startSimulation();
                 model.setupThreads(Integer.parseInt(boidsInput.getText()));
-                model.getThreads().forEach(Thread::start);
+                model.getVirtualWorkers().forEach(Thread::startVirtualThread);
             } else if (!model.getSimulationMonitor().isSimulationRunning()) {
                 model.getSimulationMonitor().startSimulation();
             }

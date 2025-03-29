@@ -50,12 +50,11 @@ public class BoidsModel {
     }
 
     public void stopSimulation() {
-        simulationMonitor.startSimulation();
         threads.forEach(MultiWorker::stopGracefully);
 
         threads.forEach(thread -> {;
             try {
-                thread.join(2000);
+                thread.join(100);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }

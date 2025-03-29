@@ -51,10 +51,10 @@ public class BoidsView implements ChangeListener {
 		bve = new BoidViewExtended(model);
 
 		bve.getStop().addActionListener(x -> {
-			model.getSimulationMonitor().stopSimulation();
-			//model.resetFirstStart();
+			model.getSimulationMonitor().startSimulation();
 			model.stopSimulation();
 			this.update(0);
+			model.getSimulationMonitor().stopSimulation();
 		});
 
 		cp.add(BorderLayout.NORTH, bve.getNorthPanel());

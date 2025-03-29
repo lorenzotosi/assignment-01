@@ -19,8 +19,6 @@ public class BoidsModel {
     private final double perceptionRadius;
     private final double avoidRadius;
     private final List<MultiWorker> threads;
-    private CyclicBarrier phase1Barrier;
-    private CyclicBarrier phase2Barrier;
     private volatile int frameCompleted = 0;
     private final SimulationMonitor simulationMonitor;
     private boolean firstStart = true;
@@ -71,8 +69,8 @@ public class BoidsModel {
         int nBoidsPerThread = nboids / nThreads;
         int poorBoids = nboids % nThreads;
 
-        phase1Barrier = new CyclicBarrier(nThreads);
-        phase2Barrier = new CyclicBarrier(nThreads, () -> {
+        CyclicBarrier phase1Barrier = new CyclicBarrier(nThreads);
+        CyclicBarrier phase2Barrier = new CyclicBarrier(nThreads, () -> {
             synchronized (this) {
                 frameCompleted++;
             }
@@ -182,9 +180,5 @@ public class BoidsModel {
 
     public boolean isFirstStart() {
         return firstStart;
-    }
-
-    public void resetFirstStart() {
-        firstStart = true;
     }
 }

@@ -70,10 +70,10 @@ public class BoidsSimulator {
         }
 
     private void notifyRunning() {
-        model.getSimulationMonitor().simulatorSafelyRunning();
+        model.getSimulationMonitor().simulatorRunning();
     }
 
     private void notifyStop() {
-        model.getSimulationMonitor().simulatorSafelyStopped();
+        model.getSimulationMonitor().simulatorStopped();
     }
 }

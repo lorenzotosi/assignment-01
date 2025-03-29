@@ -104,7 +104,7 @@ public class BoidsModel {
     }
 
     public synchronized List<Boid> getBoids(){
-    	return List.copyOf(boids);
+    	return boids;
     }
 
     public SimulationMonitor getSimulationMonitor() {

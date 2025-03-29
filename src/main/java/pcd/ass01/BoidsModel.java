@@ -4,6 +4,7 @@ import pcd.ass01.monitor.SimulationMonitor;
 import pcd.ass01.worker.MultiWorker;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CyclicBarrier;
 
 public class BoidsModel {
@@ -44,7 +45,7 @@ public class BoidsModel {
         this.avoidRadius = avoidRadius;
         this.simulationMonitor = simulationMonitor;
         
-    	boids = new ArrayList<>();
+    	boids = new CopyOnWriteArrayList<>();
         threads = new ArrayList<>();
     }
 
@@ -96,7 +97,7 @@ public class BoidsModel {
         return current;
     }
 
-    public synchronized List<Boid> getBoids(){
+    public List<Boid> getBoids(){
     	return boids;
     }
 

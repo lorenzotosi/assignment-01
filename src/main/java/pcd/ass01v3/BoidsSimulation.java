@@ -1,6 +1,6 @@
-package pcd.ass01;
+package pcd.ass01v3;
 
-import pcd.ass01.monitor.SimulationMonitor;
+import pcd.ass01v3.monitor.SimulationMonitor;
 
 public class BoidsSimulation {
 

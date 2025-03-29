@@ -1,7 +1,7 @@
-package pcd.ass01;
+package pcd.ass01v3;
 
-import pcd.ass01.monitor.SimulationMonitor;
-import pcd.ass01.worker.VirtualWorker;
+import pcd.ass01v3.monitor.SimulationMonitor;
+import pcd.ass01v3.worker.VirtualWorker;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;

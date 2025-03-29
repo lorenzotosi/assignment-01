@@ -1,8 +1,8 @@
-package pcd.ass01.worker;
+package pcd.ass01v3.worker;
 
-import pcd.ass01.Boid;
-import pcd.ass01.BoidsModel;
-import pcd.ass01.monitor.SimulationMonitor;
+import pcd.ass01v3.Boid;
+import pcd.ass01v3.BoidsModel;
+import pcd.ass01v3.monitor.SimulationMonitor;
 
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;

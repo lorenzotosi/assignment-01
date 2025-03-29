@@ -1,4 +1,4 @@
-package pcd.ass01.concurrency;
+package pcd.ass01v3.concurrency;
 
 public class MyBarrier {
 

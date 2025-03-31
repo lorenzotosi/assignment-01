@@ -47,6 +47,15 @@ public class BoidsModel {
         threads = new ArrayList<>();
     }
 
+    public void startSimulationAndThreads(String boidsInput) {
+        if (isFirstStart()) {
+            getSimulationMonitor().startSimulation();
+            setupThreads(Integer.parseInt(boidsInput));
+            getThreads().forEach(Thread::start);
+        } else if (!getSimulationMonitor().isSimulationRunning()) {
+            getSimulationMonitor().startSimulation();
+        }
+    }
     public void stopSimulation() {
         threads.forEach(MultiWorker::stopGracefully);
 

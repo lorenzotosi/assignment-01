@@ -1,5 +1,7 @@
 package pcd.ass01;
 
+import pcd.ass01.worker.MultiWorker;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -51,7 +53,10 @@ public class BoidsView implements ChangeListener {
 		bve = new BoidViewExtended(model);
 
 		bve.getStop().addActionListener(x -> {
-			model.getSimulationMonitor().stopSimulation();
+			if (!model.getSimulationMonitor().isSimulationRunning()){
+				model.getSimulationMonitor().startSimulation();
+			}
+			model.getThreads().forEach(MultiWorker::interrupt);
 			model.resetFirstStart();
 			model.setupThreads(0);
 			this.update(0);

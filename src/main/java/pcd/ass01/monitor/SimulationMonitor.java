@@ -1,52 +1,30 @@
-package pcd.ass01v2.monitor;
+package pcd.ass01.monitor;
 
 public class SimulationMonitor {
-    private static final boolean RUNNING = true;
-    private static final boolean STOPPED = false;
 
-    private boolean simulationFlag = STOPPED;
-    private boolean simulatorActualState = STOPPED;
+    private boolean simulationIsRunning = false;
+
 
     public synchronized boolean isSimulationRunning(){
-        return this.simulationFlag;
+        return simulationIsRunning;
     }
 
     public synchronized void startSimulation(){
-        simulationFlag = RUNNING;
+        simulationIsRunning = true;
         notifyAll();
     }
 
     public synchronized void stopSimulation(){
-        simulationFlag = STOPPED;
-        waitSimulatorToStop();
-    }
-
-    private void waitSimulatorToStop() {
-        while (simulatorActualState == RUNNING) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                System.out.println("Simulation interrupted, " + e.getMessage());
-            }
-        }
+        simulationIsRunning = false;
     }
 
     public synchronized void waitIfSimulationIsStopped() {
-        while (this.simulationFlag == STOPPED) {
+        while (!this.simulationIsRunning) {
             try {
                 wait();
             } catch (InterruptedException e) {
                 System.out.println("Simulation interrupted, " + e.getMessage());
             }
         }
-    }
-
-    public synchronized void simulatorSafelyStopped() {
-        this.simulatorActualState = STOPPED;
-        notifyAll();
-    }
-    public synchronized void simulatorSafelyRunning() {
-        this.simulatorActualState = RUNNING;
-        notifyAll();
     }
 }

@@ -3,6 +3,7 @@ package pcd.ass01.worker;
 import pcd.ass01.Boid;
 import pcd.ass01.BoidsModel;
 import pcd.ass01.monitor.SimulationMonitor;
+import pcd.ass01.monitor.StopperMonitor;
 
 import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
@@ -15,19 +16,21 @@ public class MultiWorker extends Thread {
     private final CyclicBarrier phase1Barrier;
     private final CyclicBarrier phase2Barrier;
     private final SimulationMonitor simulationMonitor;
-    private boolean isRunning = true;
+    private final StopperMonitor stopperMonitor;
+    //private boolean isRunning = true;
 
     public MultiWorker(List<Boid> boids, BoidsModel boidsModel, CyclicBarrier phase1Barrier,
-                       CyclicBarrier phase2Barrier, SimulationMonitor simulationMonitor) {
+                       CyclicBarrier phase2Barrier, SimulationMonitor simulationMonitor, StopperMonitor stopperMonitor) {
         this.boids = boids;
         this.boidsModel = boidsModel;
         this.phase1Barrier = phase1Barrier;
         this.phase2Barrier = phase2Barrier;
         this.simulationMonitor = simulationMonitor;
+        this.stopperMonitor = stopperMonitor;
     }
 
     public void run() {
-        while (isRunning) {
+        while (true) {
             simulationMonitor.waitIfSimulationIsStopped();
             try {
                 boids.forEach(boid -> boid.calculateVelocity(boidsModel));
@@ -47,7 +50,7 @@ public class MultiWorker extends Thread {
 
     @Override
     public void interrupt() {
-        this.isRunning = false;
+        this.stopperMonitor.notifyWorkerStop();
     }
 
 }

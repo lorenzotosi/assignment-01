@@ -1,6 +1,7 @@
 package pcd.ass01;
 
 import pcd.ass01.monitor.SimulationMonitor;
+import pcd.ass01.monitor.StopperMonitor;
 import pcd.ass01.worker.MultiWorker;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ public class BoidsModel {
     private CyclicBarrier phase2Barrier;
     private volatile int frameCompleted = 0;
     private SimulationMonitor simulationMonitor;
+    private StopperMonitor stopperMonitor;
     private boolean firstStart = true;
 
     public BoidsModel(int nboids,
@@ -58,6 +60,8 @@ public class BoidsModel {
             int nBoidsPerThread = nboids / nThreads;
             int poorBoids = nboids % nThreads;
 
+            this.stopperMonitor = new StopperMonitor(nThreads);
+
             phase1Barrier = new CyclicBarrier(nThreads);
             phase2Barrier = new CyclicBarrier(nThreads, () -> {
                 synchronized (this) {
@@ -83,7 +87,7 @@ public class BoidsModel {
                     poorBoids--;
                 }
 
-                var thread = new MultiWorker(b, this, phase1Barrier, phase2Barrier, simulationMonitor);
+                var thread = new MultiWorker(b, this, phase1Barrier, phase2Barrier, simulationMonitor, stopperMonitor);
                 threads.add(thread);
                 this.boids.addAll(b);
             }
@@ -103,6 +107,10 @@ public class BoidsModel {
 
     public SimulationMonitor getSimulationMonitor() {
         return this.simulationMonitor;
+    }
+
+    public StopperMonitor getStopperMonitor() {
+        return this.stopperMonitor;
     }
 
     public List<MultiWorker> getThreads(){

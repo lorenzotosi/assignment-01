@@ -57,6 +57,7 @@ public class BoidsView implements ChangeListener {
 				model.getSimulationMonitor().startSimulation();
 			}
 			model.getThreads().forEach(MultiWorker::interrupt);
+			model.getStopperMonitor().waitWorkersEnd();
 			model.resetFirstStart();
 			model.setupThreads(0);
 			this.update(0);

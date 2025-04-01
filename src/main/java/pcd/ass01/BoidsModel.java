@@ -1,5 +1,6 @@
 package pcd.ass01;
 
+import pcd.ass01.concurrency.MyBarrier;
 import pcd.ass01.monitor.SimulationMonitor;
 import pcd.ass01.monitor.StopperMonitor;
 import pcd.ass01.worker.MultiWorker;
@@ -20,7 +21,7 @@ public class BoidsModel {
     private final double perceptionRadius;
     private final double avoidRadius;
     private List<MultiWorker> threads;
-    private CyclicBarrier phase1Barrier;
+    private MyBarrier phase1Barrier;
     private CyclicBarrier phase2Barrier;
     private volatile int frameCompleted = 0;
     private SimulationMonitor simulationMonitor;
@@ -62,7 +63,7 @@ public class BoidsModel {
 
             this.stopperMonitor = new StopperMonitor(nThreads);
 
-            phase1Barrier = new CyclicBarrier(nThreads);
+            phase1Barrier = new MyBarrier(nThreads);
             phase2Barrier = new CyclicBarrier(nThreads, () -> {
                 synchronized (this) {
                     frameCompleted++;

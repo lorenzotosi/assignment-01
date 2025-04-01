@@ -2,6 +2,7 @@ package pcd.ass01.worker;
 
 import pcd.ass01.Boid;
 import pcd.ass01.BoidsModel;
+import pcd.ass01.concurrency.MyBarrier;
 import pcd.ass01.monitor.SimulationMonitor;
 import pcd.ass01.monitor.StopperMonitor;
 
@@ -13,13 +14,13 @@ public class MultiWorker extends Thread {
 
     private final List<Boid> boids;
     private final BoidsModel boidsModel;
-    private final CyclicBarrier phase1Barrier;
+    private final MyBarrier phase1Barrier;
     private final CyclicBarrier phase2Barrier;
     private final SimulationMonitor simulationMonitor;
     private final StopperMonitor stopperMonitor;
     //private boolean isRunning = true;
 
-    public MultiWorker(List<Boid> boids, BoidsModel boidsModel, CyclicBarrier phase1Barrier,
+    public MultiWorker(List<Boid> boids, BoidsModel boidsModel, MyBarrier phase1Barrier,
                        CyclicBarrier phase2Barrier, SimulationMonitor simulationMonitor, StopperMonitor stopperMonitor) {
         this.boids = boids;
         this.boidsModel = boidsModel;

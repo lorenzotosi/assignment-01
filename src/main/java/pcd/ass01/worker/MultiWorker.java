@@ -42,7 +42,8 @@ public class MultiWorker extends Thread {
                 Thread.currentThread().interrupt();
                 break;
             } catch (BrokenBarrierException e) {
-                throw new RuntimeException(e);
+                //throw new RuntimeException(e);
+                break;
             }
         }
 
@@ -51,6 +52,7 @@ public class MultiWorker extends Thread {
     @Override
     public void interrupt() {
         this.stopperMonitor.notifyWorkerStop();
+        super.interrupt();
     }
 
 }

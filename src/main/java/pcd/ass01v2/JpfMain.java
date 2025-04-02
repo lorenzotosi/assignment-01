@@ -3,6 +3,8 @@ package pcd.ass01v2;
 import pcd.ass01v2.monitor.SimulationMonitor;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class JpfMain {
     final static int N_BOIDS = 1500;
@@ -36,9 +38,10 @@ public class JpfMain {
 
         model.getSimulationMonitor().startSimulation();
         CountDownLatch countDownLatch = new CountDownLatch(BoidsModel.N_THREADS);
+        ExecutorService executor = Executors.newFixedThreadPool(BoidsModel.N_THREADS);
 
         try {
-            model.execute1(countDownLatch);
+            model.executeCalculateTask(countDownLatch, executor);
             countDownLatch.await();
         } catch (InterruptedException e) {
             System.out.println("Boids simulation interrupted, " + e.getMessage());
@@ -47,7 +50,7 @@ public class JpfMain {
         }
 
         try {
-            model.execute2(countDownLatch);
+            model.executeUpdateTask(countDownLatch, executor);
             countDownLatch.await();
         } catch (InterruptedException e) {
             System.out.println("Boids simulation interrupted, " + e.getMessage());

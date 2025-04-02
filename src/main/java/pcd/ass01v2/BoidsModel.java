@@ -6,9 +6,7 @@ import pcd.ass01v2.task.UpdateBoidTask;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 public class BoidsModel {
 
@@ -26,9 +24,6 @@ public class BoidsModel {
     private List<CalculateBoidVelocityTask> calculateTask;
     private SimulationMonitor simulationMonitor;
     private boolean firstStart = true;
-
-    //private ExecutorService executor = Executors.newFixedThreadPool(N_THREADS);
-    private ExecutorService executor = Executors.newCachedThreadPool();
 
     public BoidsModel(int nboids,
                       double initialSeparationWeight,
@@ -50,16 +45,16 @@ public class BoidsModel {
         this.avoidRadius = avoidRadius;
         this.simulationMonitor = simulationMonitor;
         
-    	boids = new ArrayList<>();
+    	boids = new CopyOnWriteArrayList<>();
         updateTask = new ArrayList<>();
         calculateTask = new ArrayList<>();
     }
 
     public void setupThreads(final int nboids) {
         boids.clear();
-        updateTask.clear();
-        calculateTask.clear();
         if (nboids > 0) {
+            updateTask.clear();
+            calculateTask.clear();
             firstStart = false;
             int nBoidsPerThread = nboids / N_THREADS;
             int poorBoids = nboids % N_THREADS;
@@ -89,14 +84,14 @@ public class BoidsModel {
         }
     }
 
-    public void execute1(CountDownLatch ctLatch){
+    public void executeCalculateTask(CountDownLatch ctLatch, ExecutorService executor){
         for (var x : calculateTask) {
             x.addLatch(ctLatch);
             executor.execute(x);
         }
     }
 
-    public void execute2(CountDownLatch ctLatch){
+    public void executeUpdateTask(CountDownLatch ctLatch, ExecutorService executor){
         for (var x : updateTask) {
             x.addLatch(ctLatch);
             executor.execute(x);
@@ -104,7 +99,7 @@ public class BoidsModel {
     }
 
     public synchronized List<Boid> getBoids(){
-    	return boids;
+    	return List.copyOf(boids);
     }
 
     public SimulationMonitor getSimulationMonitor() {

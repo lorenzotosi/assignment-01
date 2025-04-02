@@ -40,19 +40,17 @@ public class MultiWorker extends Thread {
                 boids.forEach(boid -> boid.updatePos(boidsModel));
                 phase2Barrier.await();
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+                this.stopperMonitor.notifyWorkerStop();
                 break;
             } catch (BrokenBarrierException e) {
                 //throw new RuntimeException(e);
                 break;
             }
         }
-
     }
 
     @Override
     public void interrupt() {
-        this.stopperMonitor.notifyWorkerStop();
         super.interrupt();
     }
 

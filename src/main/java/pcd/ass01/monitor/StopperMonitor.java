@@ -22,6 +22,7 @@ public class StopperMonitor {
 
     public synchronized void notifyWorkerStop() {
         this.workerSafelyStopped++;
+        this.notify();
     }
 
 }

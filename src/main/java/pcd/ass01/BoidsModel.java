@@ -2,7 +2,6 @@ package pcd.ass01;
 
 import pcd.ass01.concurrency.MyBarrier;
 import pcd.ass01.monitor.SimulationMonitor;
-import pcd.ass01.monitor.StopperMonitor;
 import pcd.ass01.worker.MultiWorker;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +24,6 @@ public class BoidsModel {
     private CyclicBarrier phase2Barrier;
     private volatile int frameCompleted = 0;
     private SimulationMonitor simulationMonitor;
-    private StopperMonitor stopperMonitor;
     private boolean firstStart = true;
 
     public BoidsModel(int nboids,
@@ -54,14 +52,11 @@ public class BoidsModel {
 
     public void setupThreads(final int nboids) {
         boids.clear();
-        threads.clear();
         if (nboids > 0) {
             firstStart = false;
             int nThreads = Runtime.getRuntime().availableProcessors() + 1;
             int nBoidsPerThread = nboids / nThreads;
             int poorBoids = nboids % nThreads;
-
-            this.stopperMonitor = new StopperMonitor(nThreads);
 
             phase1Barrier = new MyBarrier(nThreads);
             phase2Barrier = new CyclicBarrier(nThreads, () -> {
@@ -88,12 +83,27 @@ public class BoidsModel {
                     poorBoids--;
                 }
 
-                var thread = new MultiWorker(b, this, phase1Barrier, phase2Barrier, simulationMonitor, stopperMonitor);
+                var thread = new MultiWorker(b, this, phase1Barrier, phase2Barrier, simulationMonitor);
                 threads.add(thread);
                 this.boids.addAll(b);
             }
         }
 
+    }
+
+    public void stopWorkers() {
+        phase2Barrier.reset();
+        for (MultiWorker worker : threads) {
+            worker.interrupt();
+        }
+        for (MultiWorker worker : threads) {
+            try {
+                worker.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        threads.clear();
     }
 
     public synchronized int getAndResetFrameCompleted() {
@@ -108,10 +118,6 @@ public class BoidsModel {
 
     public SimulationMonitor getSimulationMonitor() {
         return this.simulationMonitor;
-    }
-
-    public StopperMonitor getStopperMonitor() {
-        return this.stopperMonitor;
     }
 
     public List<MultiWorker> getThreads(){

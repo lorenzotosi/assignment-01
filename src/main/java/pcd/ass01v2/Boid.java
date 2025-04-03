@@ -94,20 +94,17 @@ public class Boid {
         if (pos.x() >= model.getMaxX()) pos = pos.sum(new V2d(-model.getWidth(), 0));
         if (pos.y() < model.getMinY()) pos = pos.sum(new V2d(0, model.getHeight()));
         if (pos.y() >= model.getMaxY()) pos = pos.sum(new V2d(0, -model.getHeight()));
-    }     
-    
+    }
+
     private List<Boid> getNearbyBoids(BoidsModel model) {
-    	var list = new ArrayList<Boid>();
-        for (Boid other : model.getBoids()) {
-        	if (other != this) {
-        		P2d otherPos = other.getPos();
-        		double distance = pos.distance(otherPos);
-        		if (distance < model.getPerceptionRadius()) {
-        			list.add(other);
-        		}
-        	}
+        var candidates = model.getGrid().getNeighbors(this.pos, model.getPerceptionRadius());
+        List<Boid> neighbors = new ArrayList<>();
+        for (Boid other : candidates) {
+            if (other != null && other != this && pos.distance(other.getPos()) < model.getPerceptionRadius()) {
+                neighbors.add(other);
+            }
         }
-        return list;
+        return neighbors;
     }
     
     private V2d calculateAlignment(List<Boid> nearbyBoids, BoidsModel model) {

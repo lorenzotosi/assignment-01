@@ -26,6 +26,13 @@ public class BoidsSimulator {
       
     public void runSimulation() {
         while (true) {
+
+            SpatialHashGrid grid = model.getGrid();
+            grid.clear();
+            for (Boid boid : model.getBoids()) {
+                grid.insert(boid);
+            }
+
             ExecutorService executor = Executors.newCachedThreadPool();
             countDownLatch = new CountDownLatch(BoidsModel.N_THREADS);
             var t0 = System.currentTimeMillis();

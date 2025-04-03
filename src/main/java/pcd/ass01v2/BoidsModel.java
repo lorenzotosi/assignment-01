@@ -3,6 +3,7 @@ package pcd.ass01v2;
 import pcd.ass01v2.monitor.SimulationMonitor;
 import pcd.ass01v2.task.CalculateBoidVelocityTask;
 import pcd.ass01v2.task.UpdateBoidTask;
+import pcd.ass01v2.SpatialHashGrid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ public class BoidsModel {
     private List<CalculateBoidVelocityTask> calculateTask;
     private SimulationMonitor simulationMonitor;
     private boolean firstStart = true;
+    private final SpatialHashGrid grid;
 
     public BoidsModel(int nboids,
                       double initialSeparationWeight,
@@ -44,10 +46,14 @@ public class BoidsModel {
         this.perceptionRadius = perceptionRadius;
         this.avoidRadius = avoidRadius;
         this.simulationMonitor = simulationMonitor;
-        
+        this.grid = new SpatialHashGrid(perceptionRadius);
     	boids = new CopyOnWriteArrayList<>();
         updateTask = new ArrayList<>();
         calculateTask = new ArrayList<>();
+    }
+
+    public SpatialHashGrid getGrid() {
+        return grid;
     }
 
     public void setupThreads(final int nboids) {

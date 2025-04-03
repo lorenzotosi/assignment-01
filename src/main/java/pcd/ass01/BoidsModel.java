@@ -25,6 +25,7 @@ public class BoidsModel {
     private volatile int frameCompleted = 0;
     private SimulationMonitor simulationMonitor;
     private boolean firstStart = true;
+    private final SpatialHashGrid grid;
 
     public BoidsModel(int nboids,
                       double initialSeparationWeight,
@@ -45,9 +46,14 @@ public class BoidsModel {
         this.perceptionRadius = perceptionRadius;
         this.avoidRadius = avoidRadius;
         this.simulationMonitor = simulationMonitor;
+        this.grid = new SpatialHashGrid(perceptionRadius);
         
     	boids = new CopyOnWriteArrayList<>();
         threads = new ArrayList<>();
+    }
+
+    public SpatialHashGrid getGrid() {
+        return grid;
     }
 
     public void setupThreads(final int nboids) {

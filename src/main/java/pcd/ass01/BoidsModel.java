@@ -22,6 +22,7 @@ public class BoidsModel {
     private volatile int frameCompleted = 0;
     private final SimulationMonitor simulationMonitor;
     private boolean firstStart = true;
+    private final SpatialHashGrid grid;
 
     public BoidsModel(int nboids,
                       double initialSeparationWeight,
@@ -42,6 +43,8 @@ public class BoidsModel {
         this.perceptionRadius = perceptionRadius;
         this.avoidRadius = avoidRadius;
         this.simulationMonitor = simulationMonitor;
+        this.grid = new SpatialHashGrid(perceptionRadius);
+
         
     	boids = new CopyOnWriteArrayList<>();
         threads = new ArrayList<>();
@@ -55,6 +58,10 @@ public class BoidsModel {
         } else if (!getSimulationMonitor().isSimulationRunning()) {
             getSimulationMonitor().startSimulation();
         }
+    }
+
+    public SpatialHashGrid getGrid() {
+        return grid;
     }
     public void stopSimulation() {
         threads.forEach(MultiWorker::stopGracefully);

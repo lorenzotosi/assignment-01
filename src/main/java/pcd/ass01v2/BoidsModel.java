@@ -1,5 +1,5 @@
 package pcd.ass01v2;
-
+import pcd.ass01v2.SpatialHashGrid;
 import pcd.ass01v2.monitor.SimulationMonitor;
 import pcd.ass01v2.task.CalculateBoidVelocityTask;
 import pcd.ass01v2.task.UpdateBoidTask;
@@ -24,6 +24,7 @@ public class BoidsModel {
     private List<CalculateBoidVelocityTask> calculateTask;
     private SimulationMonitor simulationMonitor;
     private boolean firstStart = true;
+    private final SpatialHashGrid grid;
 
     public BoidsModel(int nboids,
                       double initialSeparationWeight,
@@ -44,10 +45,42 @@ public class BoidsModel {
         this.perceptionRadius = perceptionRadius;
         this.avoidRadius = avoidRadius;
         this.simulationMonitor = simulationMonitor;
+        this.grid = new SpatialHashGrid(perceptionRadius);
+
         
     	boids = new CopyOnWriteArrayList<>();
         updateTask = new ArrayList<>();
         calculateTask = new ArrayList<>();
+        threads = new ArrayList<>();
+    }
+
+    public void startSimulationAndThreads(String boidsInput) {
+        if (isFirstStart()) {
+            getSimulationMonitor().startSimulation();
+            setupThreads(Integer.parseInt(boidsInput));
+            getThreads().forEach(Thread::start);
+        } else if (!getSimulationMonitor().isSimulationRunning()) {
+            getSimulationMonitor().startSimulation();
+        }
+    }
+
+    public SpatialHashGrid getGrid() {
+        return grid;
+    }
+    public void stopSimulation() {
+        threads.forEach(MultiWorker::stopGracefully);
+
+        threads.forEach(thread -> {;
+            try {
+                thread.join(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
+
+        threads.clear();
+        boids.clear();
+        firstStart = true;
     }
 
     public void setupThreads(final int nboids) {

@@ -69,6 +69,11 @@ public class BoidsModel {
                 synchronized (this) {
                     frameCompleted++;
                 }
+                SpatialHashGrid grid = getGrid();
+                grid.clear();
+                for (Boid boid : getBoids()) {
+                    grid.insert(boid);
+                }
             });
 
             int from = 0;

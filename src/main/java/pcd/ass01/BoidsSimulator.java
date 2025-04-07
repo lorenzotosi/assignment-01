@@ -58,12 +58,6 @@ public class BoidsSimulator {
             // Simula il comportamento dei boids qui
             // model.updateBoids();
 
-            SpatialHashGrid grid = model.getGrid();
-            grid.clear();
-            for (Boid boid : model.getBoids()) {
-                grid.insert(boid);
-            }
-
             if(currentTime - lastSecond >= 1000) {
                 framerate = frames;
                 frames = 0;

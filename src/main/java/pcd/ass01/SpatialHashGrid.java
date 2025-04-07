@@ -11,8 +11,17 @@ public class SpatialHashGrid {
         this.grid = new HashMap<>();
     }
 
+    public SpatialHashGrid(double cellSize, Map<GridCell, List<Boid>> grid) {
+        this.cellSize = cellSize;
+        this.grid = Map.copyOf(grid);
+    }
+
     public void clear() {
         grid.clear();
+    }
+
+    public static SpatialHashGrid copyOf(SpatialHashGrid original){
+        return new SpatialHashGrid(original.cellSize, original.grid);
     }
 
     public void insert(Boid boid) {

@@ -1,7 +1,5 @@
 package pcd.ass01;
 
-import pcd.ass01.worker.MultiWorker;
-
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;

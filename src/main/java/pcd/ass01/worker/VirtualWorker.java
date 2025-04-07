@@ -9,18 +9,18 @@ import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
-public class MultiWorker extends Thread {
+public class VirtualWorker extends Thread {
 
-    private final List<Boid> boids;
+    private final Boid boid;
     private final BoidsModel boidsModel;
-    private final MyBarrier phase1Barrier;
+    private final CyclicBarrier phase1Barrier;
     private final CyclicBarrier phase2Barrier;
     private final SimulationMonitor simulationMonitor;
     //private boolean isRunning = true;
 
-    public MultiWorker(List<Boid> boids, BoidsModel boidsModel, MyBarrier phase1Barrier,
-                       CyclicBarrier phase2Barrier, SimulationMonitor simulationMonitor) {
-        this.boids = boids;
+    public VirtualWorker(Boid boid, BoidsModel boidsModel, CyclicBarrier phase1Barrier,
+                         CyclicBarrier phase2Barrier, SimulationMonitor simulationMonitor) {
+        this.boid = boid;
         this.boidsModel = boidsModel;
         this.phase1Barrier = phase1Barrier;
         this.phase2Barrier = phase2Barrier;
@@ -31,10 +31,10 @@ public class MultiWorker extends Thread {
         while (true) {
             simulationMonitor.waitIfSimulationIsStopped();
             try {
-                boids.forEach(boid -> boid.calculateVelocity(boidsModel));
+                boid.calculateVelocity(boidsModel);
                 phase1Barrier.await();
-                boids.forEach(boid -> boid.updateVelocity(boidsModel));
-                boids.forEach(boid -> boid.updatePos(boidsModel));
+                boid.updateVelocity(boidsModel);
+                boid.updatePos(boidsModel);
                 phase2Barrier.await();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

@@ -1,5 +1,7 @@
 package pcd.ass01;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SpatialHashGrid {
 
@@ -8,7 +10,7 @@ public class SpatialHashGrid {
 
     public SpatialHashGrid(double cellSize) {
         this.cellSize = cellSize;
-        this.grid = new HashMap<>();
+        this.grid = new ConcurrentHashMap<>();
     }
 
     public SpatialHashGrid(double cellSize, Map<GridCell, List<Boid>> grid) {
@@ -28,11 +30,11 @@ public class SpatialHashGrid {
         if (boid == null) return;
 
         GridCell cell = toCell(boid.getPos());
-        grid.computeIfAbsent(cell, k -> new ArrayList<>()).add(boid);
+        grid.computeIfAbsent(cell, k -> new CopyOnWriteArrayList<>()).add(boid);
     }
 
     public List<Boid> getNeighbors(P2d pos, double radius) {
-        List<Boid> neighbors = new ArrayList<>();
+        List<Boid> neighbors = new CopyOnWriteArrayList<>();
         int minX = (int) Math.floor((pos.x() - radius) / cellSize);
         int maxX = (int) Math.floor((pos.x() + radius) / cellSize);
         int minY = (int) Math.floor((pos.y() - radius) / cellSize);

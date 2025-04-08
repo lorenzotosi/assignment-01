@@ -20,7 +20,7 @@ public class BoidsModel {
     private final double perceptionRadius;
     private final double avoidRadius;
     private List<MultiWorker> threads;
-    private MyBarrier phase1Barrier;
+    private CyclicBarrier phase1Barrier;
     private CyclicBarrier phase2Barrier;
     private volatile int frameCompleted = 0;
     private SimulationMonitor simulationMonitor;
@@ -64,7 +64,7 @@ public class BoidsModel {
             int nBoidsPerThread = nboids / nThreads;
             int poorBoids = nboids % nThreads;
 
-            phase1Barrier = new MyBarrier(nThreads);
+            phase1Barrier = new CyclicBarrier(nThreads);
             phase2Barrier = new CyclicBarrier(nThreads, () -> {
                 synchronized (this) {
                     frameCompleted++;

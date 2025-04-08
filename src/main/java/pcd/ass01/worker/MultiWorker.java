@@ -13,11 +13,11 @@ public class MultiWorker extends Thread {
 
     private final List<Boid> boids;
     private final BoidsModel boidsModel;
-    private final MyBarrier phase1Barrier;
+    private final CyclicBarrier phase1Barrier;
     private final CyclicBarrier phase2Barrier;
     private final SimulationMonitor simulationMonitor;
 
-    public MultiWorker(List<Boid> boids, BoidsModel boidsModel, MyBarrier phase1Barrier,
+    public MultiWorker(List<Boid> boids, BoidsModel boidsModel, CyclicBarrier phase1Barrier,
                        CyclicBarrier phase2Barrier, SimulationMonitor simulationMonitor) {
         this.boids = boids;
         this.boidsModel = boidsModel;

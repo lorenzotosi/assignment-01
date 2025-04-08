@@ -16,7 +16,6 @@ public class MultiWorker extends Thread {
     private final MyBarrier phase1Barrier;
     private final CyclicBarrier phase2Barrier;
     private final SimulationMonitor simulationMonitor;
-    //private boolean isRunning = true;
 
     public MultiWorker(List<Boid> boids, BoidsModel boidsModel, MyBarrier phase1Barrier,
                        CyclicBarrier phase2Barrier, SimulationMonitor simulationMonitor) {
@@ -40,17 +39,10 @@ public class MultiWorker extends Thread {
                 Thread.currentThread().interrupt();
                 break;
             } catch (BrokenBarrierException e) {
-                //throw new RuntimeException(e);
                 break;
             }
         }
 
-    }
-
-    @Override
-    public void interrupt() {
-        //this.stopperMonitor.notifyWorkerStop();
-        super.interrupt();
     }
 
 }

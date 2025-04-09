@@ -1,4 +1,4 @@
-package pcd.ass01v3;
+package pcd.ass01;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -51,8 +51,12 @@ public class BoidsView implements ChangeListener {
 		bve = new BoidViewExtended(model);
 
 		bve.getStop().addActionListener(x -> {
-			model.getSimulationMonitor().startSimulation();
-			model.stopSimulation();
+			if (!model.getSimulationMonitor().isSimulationRunning()){
+				model.getSimulationMonitor().startSimulation();
+			}
+			model.stopWorkers();
+			model.resetFirstStart();
+			model.setupThreads(0);
 			this.update(0);
 			model.getSimulationMonitor().stopSimulation();
 		});

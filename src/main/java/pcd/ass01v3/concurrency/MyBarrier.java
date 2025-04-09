@@ -2,21 +2,21 @@ package pcd.ass01v3.concurrency;
 
 public class MyBarrier {
 
-    private int nWorkers;
-    private int nTotal = 0;
+    private final int nWorkers;
+    private int nTotal;
 
     public MyBarrier(int nWorkers) {
         this.nWorkers = nWorkers;
+        this.nTotal = nWorkers;
     }
 
     public synchronized void await() throws InterruptedException {
-        nTotal++;
-        if(nTotal == nWorkers) {
-            notifyAll();
+        nTotal--;
+        if (nTotal > 0) {
+            wait();
         } else {
-            while (nTotal < nWorkers) {
-                wait();
-            }
+            nTotal = nWorkers;
+            notifyAll();
         }
     }
 }

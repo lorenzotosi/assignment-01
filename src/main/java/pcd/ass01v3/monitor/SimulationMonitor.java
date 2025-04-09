@@ -4,6 +4,7 @@ public class SimulationMonitor {
 
     private boolean simulationIsRunning = false;
 
+
     public synchronized boolean isSimulationRunning(){
         return simulationIsRunning;
     }

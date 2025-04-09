@@ -1,7 +1,8 @@
-package pcd.ass01v3;
+package pcd.ass01;
 
-import pcd.ass01v3.monitor.SimulationMonitor;
-import pcd.ass01v3.worker.VirtualWorker;
+import pcd.ass01.concurrency.MyBarrier;
+import pcd.ass01.monitor.SimulationMonitor;
+import pcd.ass01.worker.VirtualWorker;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -18,10 +19,14 @@ public class BoidsModel {
     private final double maxSpeed;
     private final double perceptionRadius;
     private final double avoidRadius;
+    private List<VirtualWorker> threads;
+    private CyclicBarrier phase1Barrier;
+    private CyclicBarrier phase2Barrier;
     private final List<VirtualWorker> virtualWorkers;
     private volatile int frameCompleted = 0;
     private final SimulationMonitor simulationMonitor;
     private boolean firstStart = true;
+    private final SpatialHashGrid grid;
 
     public BoidsModel(int nboids,
                       double initialSeparationWeight,
@@ -42,44 +47,59 @@ public class BoidsModel {
         this.perceptionRadius = perceptionRadius;
         this.avoidRadius = avoidRadius;
         this.simulationMonitor = simulationMonitor;
-        
+        this.grid = new SpatialHashGrid(perceptionRadius);
+
     	boids = new CopyOnWriteArrayList<>();
-        virtualWorkers = new ArrayList<>();
+        threads = new ArrayList<>();
     }
 
-    public void stopSimulation() {
-        virtualWorkers.forEach(VirtualWorker::stopGracefully);
+    public SpatialHashGrid getGrid() {
+        return grid;
+    }
 
-        virtualWorkers.forEach(thread -> {;
+    public void setupThreads(final int nBoids) {
+        boids.clear();
+        if (nBoids > 0) {
+            firstStart = false;
+
+            phase1Barrier = new CyclicBarrier(nBoids);
+            phase2Barrier = new CyclicBarrier(nBoids, () -> {
+                synchronized (this) {
+                    frameCompleted++;
+                }
+                SpatialHashGrid grid = getGrid();
+                grid.clear();
+                for (Boid boid : getBoids()) {
+                    grid.insert(boid);
+                }
+            });
+
+            for (int i = 0; i < nBoids; i++) {
+                P2d pos = new P2d(-width / 2 + Math.random() * width, -height / 2 + Math.random() * height);
+                V2d vel = new V2d(Math.random() * maxSpeed / 2 - maxSpeed / 4, Math.random() * maxSpeed / 2 - maxSpeed / 4);
+                var b = new Boid(pos, vel);
+
+                var thread = new VirtualWorker(b, this, phase1Barrier, phase2Barrier, simulationMonitor);
+                threads.add(thread);
+                this.boids.add(b);
+            }
+        }
+
+    }
+
+    public void stopWorkers() {
+        phase2Barrier.reset();
+        for (VirtualWorker worker : threads) {
+            worker.interrupt();
+        }
+        for (VirtualWorker worker : threads) {
             try {
-                thread.join(100);
+                worker.join();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-        });
-
-        virtualWorkers.clear();
-        boids.clear();
-        firstStart = true;
-    }
-
-    public void setupThreads(final int nboids) {
-        firstStart = false;
-        CyclicBarrier phase1Barrier = new CyclicBarrier(nboids);
-        CyclicBarrier phase2Barrier = new CyclicBarrier(nboids, () -> {
-            synchronized (this) {
-                frameCompleted++;
-            }
-        });
-
-        for (int i = 0; i < nboids; i++) {
-            P2d pos = new P2d(-width/2 + Math.random() * width, -height/2 + Math.random() * height);
-            V2d vel = new V2d(Math.random() * maxSpeed/2 - maxSpeed/4, Math.random() * maxSpeed/2 - maxSpeed/4);
-            var b = new Boid(pos, vel);
-            boids.add(b);
-            var thread = new VirtualWorker(b, this, phase1Barrier, phase2Barrier, simulationMonitor);
-            virtualWorkers.add(thread);
         }
+        threads.clear();
     }
 
     public synchronized int getAndResetFrameCompleted() {
@@ -96,8 +116,8 @@ public class BoidsModel {
         return this.simulationMonitor;
     }
 
-    public List<VirtualWorker> getVirtualWorkers(){
-        return virtualWorkers;
+    public List<VirtualWorker> getThreads(){
+        return threads;
     }
     
     public double getMinX() {
@@ -162,5 +182,9 @@ public class BoidsModel {
 
     public boolean isFirstStart() {
         return firstStart;
+    }
+
+    public void resetFirstStart() {
+        firstStart = true;
     }
 }

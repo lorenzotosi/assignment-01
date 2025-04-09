@@ -1,4 +1,4 @@
-package pcd.ass01v3;
+package pcd.ass01;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,7 +31,7 @@ public class BoidViewExtended {
             if (model.isFirstStart()) {
                 model.getSimulationMonitor().startSimulation();
                 model.setupThreads(Integer.parseInt(boidsInput.getText()));
-                model.getVirtualWorkers().forEach(Thread::startVirtualThread);
+                model.getThreads().forEach(Thread::startVirtualThread);
             } else if (!model.getSimulationMonitor().isSimulationRunning()) {
                 model.getSimulationMonitor().startSimulation();
             }

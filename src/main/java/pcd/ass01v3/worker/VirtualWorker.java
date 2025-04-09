@@ -2,10 +2,8 @@ package pcd.ass01v3.worker;
 
 import pcd.ass01v3.Boid;
 import pcd.ass01v3.BoidsModel;
-import pcd.ass01v3.concurrency.MyBarrier;
 import pcd.ass01v3.monitor.SimulationMonitor;
 
-import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 

@@ -33,10 +33,10 @@ public class BoidsSimulator {
                 grid.insert(boid);
             }
 
+            model.getSimulationMonitor().waitIfSimulationIsStopped();
             ExecutorService executor = Executors.newCachedThreadPool();
             countDownLatch = new CountDownLatch(BoidsModel.N_THREADS);
             var t0 = System.currentTimeMillis();
-            model.getSimulationMonitor().waitIfSimulationIsStopped();
 
             try {
                 model.executeCalculateTask(countDownLatch, executor);

@@ -53,13 +53,11 @@ public class BoidsView implements ChangeListener {
 		bve = new BoidViewExtended(model);
 
 		bve.getStop().addActionListener(x -> {
-			if (!model.getSimulationMonitor().isSimulationRunning()){
-				model.getSimulationMonitor().startSimulation();
-			}
-			model.stopWorkers();
+			model.getSimulationMonitor().startSimulation(); // Halt first
+			model.stopWorkers(); // Break barriers and join threads
 			model.resetFirstStart();
-			model.setupThreads(0);
-			this.update(0);
+			model.setupThreads(0); // Clear data
+			this.update(0); // Refresh UI
 			model.getSimulationMonitor().stopSimulation();
 		});
 

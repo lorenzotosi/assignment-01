@@ -57,9 +57,12 @@ public class BoidsModel {
 
     public void setupThreads(final int nboids) {
         boids.clear();
+        threads.clear();
+
         if (nboids > 0) {
             firstStart = false;
-            int nThreads = Runtime.getRuntime().availableProcessors() + 1;
+            //int nThreads = Runtime.getRuntime().availableProcessors() + 1;
+            int nThreads = 4;
             int nBoidsPerThread = nboids / nThreads;
             int poorBoids = nboids % nThreads;
 
@@ -97,23 +100,31 @@ public class BoidsModel {
                 threads.add(thread);
                 this.boids.addAll(b);
             }
+        } else {
+            phase1Barrier = null; // Clear barriers
+            phase2Barrier = null;
+            firstStart = true;
         }
 
     }
 
     public void stopWorkers() {
-        phase2Barrier.reset();
-        for (MultiWorker worker : threads) {
-            worker.interrupt();
-        }
-        for (MultiWorker worker : threads) {
+        threads.forEach(MultiWorker::stopWorker); // Set running=false
+
+        // Break barriers to unblock threads
+        if (phase1Barrier != null) phase1Barrier.reset();
+        if (phase2Barrier != null) phase2Barrier.reset();
+
+        // Wait for threads to terminate
+        threads.forEach(t -> {
             try {
-                worker.join();
+                t.join();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-        }
-        threads.clear();
+        });
+
+        threads.clear(); // Cleanup
     }
 
     public synchronized int getAndResetFrameCompleted() {

@@ -14,8 +14,9 @@ public class SimulationMonitor {
         notifyAll();
     }
 
-    public synchronized void stopSimulation(){
+    public synchronized void stopSimulation() {
         simulationIsRunning = false;
+        notifyAll(); // Wake all waiting threads to check `running`
     }
 
     public synchronized void waitIfSimulationIsStopped() {

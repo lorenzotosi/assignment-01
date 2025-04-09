@@ -15,6 +15,11 @@ public class MultiWorker extends Thread {
     private final CyclicBarrier phase1Barrier;
     private final CyclicBarrier phase2Barrier;
     private final SimulationMonitor simulationMonitor;
+    private volatile boolean running = true;
+
+    public void stopWorker() {
+        running = false;
+    }
 
     public MultiWorker(List<Boid> boids, BoidsModel boidsModel, CyclicBarrier phase1Barrier,
                        CyclicBarrier phase2Barrier, SimulationMonitor simulationMonitor) {
@@ -26,22 +31,29 @@ public class MultiWorker extends Thread {
     }
 
     public void run() {
-        while (true) {
+        while (running) {
             simulationMonitor.waitIfSimulationIsStopped();
+            if (!running) break;
             try {
+                // Phase 1: Calculate velocities
                 boids.forEach(boid -> boid.calculateVelocity(boidsModel));
+                if (!running) break;
                 phase1Barrier.await();
+                // Phase 2: Update velocities and positions
                 boids.forEach(boid -> boid.updateVelocity(boidsModel));
                 boids.forEach(boid -> boid.updatePos(boidsModel));
+                if (!running) break;
                 phase2Barrier.await();
+            } catch (BrokenBarrierException e) {
+                if (!running) {
+                    break;
+                }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
-            } catch (BrokenBarrierException e) {
-                break;
             }
         }
-
+        Thread.currentThread().interrupt();
     }
 
 }

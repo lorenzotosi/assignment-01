@@ -1,5 +1,6 @@
 package pcd.ass01;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SpatialHashGrid {
 
@@ -8,7 +9,7 @@ public class SpatialHashGrid {
 
     public SpatialHashGrid(double cellSize) {
         this.cellSize = cellSize;
-        this.grid = new HashMap<>();
+        this.grid = new ConcurrentHashMap<>();
     }
 
     public SpatialHashGrid(double cellSize, Map<GridCell, List<Boid>> grid) {

@@ -2,7 +2,6 @@ package pcd.ass01.worker;
 
 import pcd.ass01.Boid;
 import pcd.ass01.BoidsModel;
-import pcd.ass01.concurrency.MyBarrier;
 import pcd.ass01.monitor.SimulationMonitor;
 
 import java.util.List;

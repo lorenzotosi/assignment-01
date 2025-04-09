@@ -1,4 +1,4 @@
-package pcd.ass01;
+package pcd.ass01v3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +70,7 @@ public class Boid {
                 neighbors.add(other);
             }
         }
-        return list;
+        return neighbors;
     }
     
     private V2d calculateAlignment(List<Boid> nearbyBoids, BoidsModel model) {

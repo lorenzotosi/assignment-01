@@ -1,8 +1,7 @@
-package pcd.ass01;
+package pcd.ass01v3;
 
-import pcd.ass01.concurrency.MyBarrier;
-import pcd.ass01.monitor.SimulationMonitor;
-import pcd.ass01.worker.VirtualWorker;
+import pcd.ass01v3.monitor.SimulationMonitor;
+import pcd.ass01v3.worker.VirtualWorker;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -22,7 +21,7 @@ public class BoidsModel {
     private List<VirtualWorker> threads;
     private CyclicBarrier phase1Barrier;
     private CyclicBarrier phase2Barrier;
-    private final List<VirtualWorker> virtualWorkers;
+    private List<VirtualWorker> virtualWorkers;
     private volatile int frameCompleted = 0;
     private final SimulationMonitor simulationMonitor;
     private boolean firstStart = true;

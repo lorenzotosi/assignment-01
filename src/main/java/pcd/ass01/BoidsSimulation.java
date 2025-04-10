@@ -1,7 +1,5 @@
 package pcd.ass01;
 
-import pcd.ass01.monitor.SimulationMonitor;
-
 public class BoidsSimulation {
 
 	final static int N_BOIDS = 1500;
@@ -20,16 +18,14 @@ public class BoidsSimulation {
 	final static int SCREEN_HEIGHT = 800; 
 	
 
-    public static void main(String[] args) {
-		var simMonitor = new SimulationMonitor();
+    public static void main(String[] args) {      
     	var model = new BoidsModel(
     					N_BOIDS, 
     					SEPARATION_WEIGHT, ALIGNMENT_WEIGHT, COHESION_WEIGHT, 
     					ENVIRONMENT_WIDTH, ENVIRONMENT_HEIGHT,
     					MAX_SPEED,
     					PERCEPTION_RADIUS,
-    					AVOID_RADIUS,
-				simMonitor);
+    					AVOID_RADIUS); 
     	var sim = new BoidsSimulator(model);
     	var view = new BoidsView(model, SCREEN_WIDTH, SCREEN_HEIGHT);
     	sim.attachView(view);

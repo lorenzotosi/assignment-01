@@ -26,7 +26,12 @@ public class MultiWorker extends Thread {
     }
 
     public void run() {
+        double sum = 0.0;
+        int count = 0;
+        long startTime;
+        double elapsedTime;
         while (true) {
+            startTime = System.nanoTime();
             simulationMonitor.waitIfSimulationIsStopped();
             try {
                 boids.forEach(boid -> boid.calculateVelocity(boidsModel));
@@ -40,8 +45,15 @@ public class MultiWorker extends Thread {
             } catch (BrokenBarrierException e) {
                 break;
             }
+            elapsedTime = (System.nanoTime() - startTime)/1_000_000.0;
+            sum += elapsedTime;
+            count++;
+            if (count == 100) {
+                System.out.println("Average Thread " + this.getName() + " time: " + sum / count);
+                sum = 0.0;
+                count = 0;
+            }
         }
-
     }
 
 }

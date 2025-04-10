@@ -49,7 +49,7 @@ public class MultiWorker extends Thread {
             sum += elapsedTime;
             count++;
             if (count == 100) {
-                System.out.println("Average Thread " + this.getName() + " time: " + sum / count);
+                System.out.println(sum / count);
                 sum = 0.0;
                 count = 0;
             }

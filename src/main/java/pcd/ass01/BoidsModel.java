@@ -4,6 +4,7 @@ import pcd.ass01.monitor.SimulationMonitor;
 import pcd.ass01.worker.MultiWorker;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CyclicBarrier;
 
@@ -78,17 +79,19 @@ public class BoidsModel {
             int from = 0;
             int to = nBoidsPerThread - 1;
 
+            var random = new Random(100);
+
             for (int i = 0; i < nThreads; i++) {
                 var b = new ArrayList<Boid>();
                 for (int j = from; j <= to; j++) {
-                    P2d pos = new P2d(-width / 2 + Math.random() * width, -height / 2 + Math.random() * height);
-                    V2d vel = new V2d(Math.random() * maxSpeed / 2 - maxSpeed / 4, Math.random() * maxSpeed / 2 - maxSpeed / 4);
+                    P2d pos = new P2d(-width / 2 + random.nextDouble() * width, -height / 2 + random.nextDouble() * height);
+                    V2d vel = new V2d(random.nextDouble() * maxSpeed / 2 - maxSpeed / 4, random.nextDouble() * maxSpeed / 2 - maxSpeed / 4);
                     b.add(new Boid(pos, vel));
                 }
 
                 if (poorBoids != 0) {
-                    P2d pos = new P2d(-width / 2 + Math.random() * width, -height / 2 + Math.random() * height);
-                    V2d vel = new V2d(Math.random() * maxSpeed / 2 - maxSpeed / 4, Math.random() * maxSpeed / 2 - maxSpeed / 4);
+                    P2d pos = new P2d(-width / 2 + random.nextDouble() * width, -height / 2 + random.nextDouble() * height);
+                    V2d vel = new V2d(random.nextDouble() * maxSpeed / 2 - maxSpeed / 4, random.nextDouble() * maxSpeed / 2 - maxSpeed / 4);
                     b.add(new Boid(pos, vel));
                     poorBoids--;
                 }

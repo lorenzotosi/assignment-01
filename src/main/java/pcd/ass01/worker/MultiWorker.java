@@ -4,6 +4,9 @@ import pcd.ass01.Boid;
 import pcd.ass01.BoidsModel;
 import pcd.ass01.monitor.SimulationMonitor;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
@@ -26,33 +29,35 @@ public class MultiWorker extends Thread {
     }
 
     public void run() {
-        double sum = 0.0;
-        int count = 0;
-        long startTime;
-        double elapsedTime;
-        while (true) {
-            startTime = System.nanoTime();
-            simulationMonitor.waitIfSimulationIsStopped();
-            try {
-                boids.forEach(boid -> boid.calculateVelocity(boidsModel));
-                phase1Barrier.await();
-                boids.forEach(boid -> boid.updateVelocity(boidsModel));
-                boids.forEach(boid -> boid.updatePos(boidsModel));
-                phase2Barrier.await();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
-            } catch (BrokenBarrierException e) {
-                break;
+        int iterationCount = 0;
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("thread_" + this.getId() + ".txt"))) {
+            while (true) {
+                simulationMonitor.waitIfSimulationIsStopped();
+                try {
+                    //long startTime = System.nanoTime();
+
+                    boids.forEach(boid -> boid.calculateVelocity(boidsModel));
+                    phase1Barrier.await();
+                    boids.forEach(boid -> boid.updateVelocity(boidsModel));
+                    boids.forEach(boid -> boid.updatePos(boidsModel));
+                    phase2Barrier.await();
+
+//                    long endTime = System.nanoTime();
+//                    long iterationTime = endTime - startTime;
+//
+//                    if (/*iterationCount < 10000*/ false) {
+//                        writer.write(iterationTime + "\n");
+//                        iterationCount++;
+//                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                } catch (BrokenBarrierException e) {
+                    break;
+                }
             }
-            elapsedTime = (System.nanoTime() - startTime)/1_000_000.0;
-            sum += elapsedTime;
-            count++;
-            if (count == 100) {
-                System.out.println("Average Thread " + this.getName() + " time: " + sum / count);
-                sum = 0.0;
-                count = 0;
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

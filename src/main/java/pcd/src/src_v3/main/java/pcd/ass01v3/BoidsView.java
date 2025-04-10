@@ -1,4 +1,4 @@
-package pcd.ass01;
+package pcd.ass01v3;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -14,6 +14,8 @@ public class BoidsView implements ChangeListener {
 	private JSlider cohesionSlider, separationSlider, alignmentSlider;
 	private BoidsModel model;
 	private int width, height;
+
+	private BoidViewExtended bve;
 	
 	public BoidsView(BoidsModel model, int width, int height) {
 		this.model = model;
@@ -45,6 +47,21 @@ public class BoidsView implements ChangeListener {
         slidersPanel.add(cohesionSlider);
 		        
 		cp.add(BorderLayout.SOUTH, slidersPanel);
+
+		bve = new BoidViewExtended(model);
+
+		bve.getStop().addActionListener(x -> {
+			if (!model.getSimulationMonitor().isSimulationRunning()){
+				model.getSimulationMonitor().startSimulation();
+			}
+			model.stopWorkers();
+			model.resetFirstStart();
+			model.setupThreads(0);
+			this.update(0);
+			model.getSimulationMonitor().stopSimulation();
+		});
+
+		cp.add(BorderLayout.NORTH, bve.getNorthPanel());
 
 		frame.setContentPane(cp);	
 		
